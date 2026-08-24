@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import Banner from '../components/Banner';
 import DoctorCard from '../components/DoctorCard';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 35, scale: 0.95 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 12
+    }
+  }
+};
 
 export default function HomePage({ 
   doctors, 
@@ -98,8 +124,15 @@ export default function HomePage({
             </button>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button 
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+          className="flex flex-wrap gap-2"
+        >
+          <motion.button 
+            variants={itemVariants}
             onClick={() => setSelectedZone(null)}
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
               selectedZone === null 
@@ -108,10 +141,11 @@ export default function HomePage({
             }`}
           >
             {trans.allZones}
-          </button>
+          </motion.button>
           {dynamicZones.map(zone => (
-            <button 
+            <motion.button 
               key={zone}
+              variants={itemVariants}
               onClick={() => setSelectedZone(zone)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
                 selectedZone === zone 
@@ -120,9 +154,9 @@ export default function HomePage({
               }`}
             >
               📍 {zone}
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* 3. Search Bar */}
@@ -189,10 +223,17 @@ export default function HomePage({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-11 gap-3">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-11 gap-3"
+        >
           {topSpecialties.map((spec) => (
-            <button 
+            <motion.button 
               key={spec.name}
+              variants={itemVariants}
               onClick={() => setSelectedSpecialty(spec.name)}
               className={`specialty-card group p-3 rounded-2xl bg-white dark:bg-slate-900 border hover:border-green-500 flex flex-col items-center text-center gap-1.5 shadow-sm transition-all hover:-translate-y-1 ${
                 selectedSpecialty === spec.name ? 'border-green-500 bg-green-50/20 dark:bg-slate-800' : 'border-slate-200 dark:border-slate-800'
@@ -204,9 +245,9 @@ export default function HomePage({
               <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 leading-tight">
                 {isUrdu ? spec.ur : (spec.name.length > 9 ? `${spec.name.slice(0, 8)}...` : spec.name)}
               </span>
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* 5. Active Doctors Grid */}
@@ -242,17 +283,24 @@ export default function HomePage({
             </button>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {filteredDocs.map((doc) => (
-              <DoctorCard 
-                key={doc.id}
-                doc={doc}
-                onViewProfile={() => onViewProfile(doc)}
-                onGetToken={() => onGetToken(doc)}
-                language={language}
-              />
+              <motion.div key={doc.id} variants={itemVariants}>
+                <DoctorCard 
+                  doc={doc}
+                  onViewProfile={() => onViewProfile(doc)}
+                  onGetToken={() => onGetToken(doc)}
+                  language={language}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
 
