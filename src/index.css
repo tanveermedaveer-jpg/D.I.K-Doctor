@@ -40,3 +40,33 @@ html, body, #root {
   max-width: 100vw;
   overflow-x: hidden;
 }
+
+/* Night / Dark Mode Input Field Text Visibility & Contrast Enforcement */
+.dark input,
+.dark select,
+.dark textarea {
+  color: #ffffff !important;
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dark select option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* Chrome / Safari / Edge Autofill Fix in Dark Mode */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus,
+.dark textarea:-webkit-autofill,
+.dark select:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

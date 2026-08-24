@@ -109,12 +109,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     required 
                     autoComplete="off"
                     placeholder="Enter registered phone number or doctor name" 
-                    className="w-full block pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-green-500 dark:text-slate-100"
+                    className="w-full block pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-605 dark:text-slate-400 mb-1">Security PIN (4-Digit)</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Security PIN (4-Digit)</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"><i className="fa-solid fa-key"></i></span>
                   <input 
@@ -126,12 +126,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     pattern="[0-9]{4}" 
                     maxLength={4} 
                     placeholder="Enter 4-digit PIN" 
-                    className="w-full block pl-9 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-green-500 dark:text-slate-100"
+                    className="w-full block pl-9 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-500 font-mono"
                   />
                   <button 
                     type="button" 
                     onClick={() => setShowPin(!showPin)} 
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-355"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                   >
                     <i className={`fa-solid ${showPin ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
                   </button>
@@ -141,7 +141,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           ) : (
             <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-605 dark:text-slate-400 mb-1">Admin Phone/Username</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Admin Phone/Username</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"><i className="fa-solid fa-user"></i></span>
                    <input 
@@ -151,12 +151,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     required 
                     autoComplete="off"
                     placeholder="Enter admin phone number" 
-                    className="w-full block pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-green-500 dark:text-slate-100"
+                    className="w-full block pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-605 dark:text-slate-400 mb-1">Password</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Password</label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"><i className="fa-solid fa-lock"></i></span>
                   <input 
@@ -166,7 +166,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     required 
                     autoComplete="new-password"
                     placeholder="Enter admin password" 
-                    className="w-full block pl-9 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-green-500 dark:text-slate-100"
+                    className="w-full block pl-9 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-500 font-mono"
                   />
                   <button 
                     type="button" 

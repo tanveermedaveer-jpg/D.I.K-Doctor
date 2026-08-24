@@ -451,22 +451,22 @@ export default function AdminDashboard({
                   </div>
                 </div>
 
-                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 space-y-2">
-                  <h3 className="text-xs font-bold text-slate-750 dark:text-slate-350"><i className="fa-solid fa-lock text-green-600 mr-1"></i> Dashboard Login Credentials</h3>
+                <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+                  <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300"><i className="fa-solid fa-lock text-green-600 mr-1"></i> Dashboard Login Credentials</h3>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[9px] font-semibold text-slate-455 mb-0.5">Mobile Phone</label>
+                      <label className="block text-[9px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Mobile Phone</label>
                       <input 
                         type="tel" 
                         value={phone} 
                         onChange={(e) => setPhone(e.target.value)} 
                         required 
                         placeholder="Phone Number" 
-                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-850 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                        className="w-full px-2.5 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-semibold text-slate-455 mb-0.5">4-Digit PIN</label>
+                      <label className="block text-[9px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">4-Digit PIN</label>
                       <div className="relative">
                         <input 
                           type={showPin ? 'text' : 'password'} 
@@ -476,9 +476,9 @@ export default function AdminDashboard({
                           pattern="[0-9]{4}" 
                           maxLength={4} 
                           placeholder="PIN Code" 
-                          className="w-full pl-2.5 pr-7 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-755 bg-white dark:bg-slate-855 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                          className="w-full pl-2.5 pr-7 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none font-mono"
                         />
-                        <button type="button" onClick={() => setShowPin(!showPin)} className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-605">
+                        <button type="button" onClick={() => setShowPin(!showPin)} className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                           <i className={`fa-solid ${showPin ? 'fa-eye-slash' : 'fa-eye'} text-[10px]`}></i>
                         </button>
                       </div>

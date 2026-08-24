@@ -633,25 +633,25 @@ export default function DoctorDashboard({
                 ) : (
                   <form onSubmit={handleWalkInSubmit} className="space-y-3">
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 mb-1">Patient Name</label>
+                      <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Patient Name</label>
                       <input 
                         type="text" 
                         value={walkinName} 
                         onChange={(e) => setWalkinName(e.target.value)} 
                         required 
                         placeholder="Enter patient name" 
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50 dark:bg-slate-850 focus:ring-2 focus:ring-teal-500 outline-none dark:text-slate-100"
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-teal-500 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 mb-1">Patient Phone / ID</label>
+                      <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Patient Phone / ID</label>
                       <input 
                         type="tel" 
                         value={walkinPhone} 
                         onChange={(e) => setWalkinPhone(e.target.value)} 
                         required 
                         placeholder="Enter patient mobile number" 
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-750 bg-slate-50 dark:bg-slate-850 focus:ring-2 focus:ring-teal-500 outline-none dark:text-slate-100"
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-teal-500 outline-none font-mono"
                       />
                     </div>
                     <button type="submit" className="w-full py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1">
@@ -680,7 +680,7 @@ export default function DoctorDashboard({
                     onChange={(e) => setDocName(e.target.value)} 
                     required 
                     placeholder="Enter doctor name" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none"
                   />
                 </div>
                 <div>
@@ -691,7 +691,7 @@ export default function DoctorDashboard({
                     onChange={(e) => setSpecialty(e.target.value)} 
                     required 
                     placeholder="e.g. Cardiologist" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none"
                   />
                 </div>
                 <div>
@@ -702,7 +702,7 @@ export default function DoctorDashboard({
                     onChange={(e) => setDocPhone(e.target.value)} 
                     required 
                     placeholder="Phone number" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none font-mono"
                   />
                 </div>
                 <div>
@@ -716,7 +716,7 @@ export default function DoctorDashboard({
                       maxLength={4}
                       pattern="[0-9]{4}"
                       placeholder="PIN Code" 
-                      className="w-full pl-3 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                      className="w-full pl-3 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none font-mono"
                     />
                     <button 
                       type="button" 
@@ -762,7 +762,7 @@ export default function DoctorDashboard({
               </div>
 
               {/* Alternative theme colors & custom URL */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 space-y-2.5">
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2.5">
                 <label className="block text-[10px] uppercase font-bold text-slate-400">Alternative Banner Colors & URLs</label>
                 <div className="grid grid-cols-4 gap-2">
                   <button type="button" onClick={() => handleBannerColor('bg-gradient-to-r from-teal-500 to-green-500')} className="h-8 rounded-lg bg-gradient-to-r from-teal-500 to-green-500 border border-slate-300 dark:border-slate-700"></button>
@@ -771,19 +771,19 @@ export default function DoctorDashboard({
                   <button type="button" onClick={() => handleBannerColor('bg-gradient-to-r from-amber-500 to-orange-600')} className="h-8 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 border border-slate-300 dark:border-slate-700"></button>
                 </div>
                 <div>
-                  <label className="block text-[10px] text-slate-455 mb-0.5">Or paste Custom Banner URL</label>
+                  <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">Or paste Custom Banner URL</label>
                   <input 
                     type="text" 
                     value={bannerUrl} 
                     onChange={(e) => handleBannerUrlInput(e.target.value)} 
                     placeholder="Enter banner image URL" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-750 bg-white dark:bg-slate-800 outline-none dark:text-slate-100"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none"
                   />
                 </div>
               </div>
 
               {/* Contact Privacy Toggle */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850 flex items-center justify-between">
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
                   <h4 className="text-xs font-bold flex items-center gap-1.5"><i className="fa-solid fa-user-shield text-green-500"></i> Contact Privacy Option</h4>
                   <p className="text-[10px] text-slate-400 mt-0.5">Hide personal mobile number on public profile</p>
@@ -820,7 +820,7 @@ export default function DoctorDashboard({
                   onChange={(e) => setTimings(e.target.value)} 
                   required 
                   placeholder="e.g. 09:00 AM - 01:00 PM" 
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none"
                 />
               </div>
 
@@ -832,11 +832,11 @@ export default function DoctorDashboard({
                   onChange={(e) => setFee(e.target.value)} 
                   required 
                   placeholder="Enter fee amount" 
-                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                  className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-green-500 outline-none font-mono"
                 />
               </div>
 
-              <div className="text-[10px] bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-850 text-slate-500">
+              <div className="text-[10px] bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400">
                 <i className="fa-solid fa-circle-info mr-1 text-green-500"></i> Updates made to timings or fee configurations propagate to the public homepage immediately.
               </div>
 
@@ -861,7 +861,7 @@ export default function DoctorDashboard({
                   value={delayMinutes}
                   onChange={(e) => setDelayMinutes(e.target.value)}
                   placeholder="e.g. 15"
-                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-amber-400 outline-none dark:text-slate-100"
+                  className="flex-1 px-3 py-2 text-xs rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 focus:ring-2 focus:ring-amber-400 outline-none font-mono"
                 />
                 <button
                   type="button"
