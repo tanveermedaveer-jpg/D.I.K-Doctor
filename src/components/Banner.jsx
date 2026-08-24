@@ -19,16 +19,18 @@ export default function Banner({ activeTokens, activeDoctors, language }) {
   return (
     <div className="relative rounded-3xl overflow-hidden text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-slate-200 dark:border-slate-800">
       
-      {/* High-Definition Unsplash Healthcare Background Image */}
+      {/* User-focused clinical background image with custom position for mobile */}
       <div 
-        className="absolute inset-0 bg-cover bg-center" 
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=80')" }}
+        className="absolute inset-0 bg-cover bg-[position:75%_center] sm:bg-center" 
+        style={{ backgroundImage: "url('/assets/hero-bg-user.jpg')" }}
       ></div>
       
-      {/* Translucent Dark Gradient Overlay */}
+      {/* Translucent Dark Gradient Overlay for optimal text readability */}
       <div 
-        className="absolute inset-0 backdrop-blur-[1px]" 
-        style={{ background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(6, 78, 59, 0.75) 100%)' }}
+        className="absolute inset-0 backdrop-blur-[0.5px]" 
+        style={{ 
+          background: 'linear-gradient(to right, rgba(3, 47, 46, 0.95) 0%, rgba(3, 47, 46, 0.8) 45%, rgba(3, 47, 46, 0.3) 100%)' 
+        }}
       ></div>
       
       {/* Subtle glowing elements */}
