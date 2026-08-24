@@ -50,7 +50,7 @@ export default function AdminDashboard({
   const [city, setCity] = useState('D.I.K');
   const [zone, setZone] = useState('');
   const [gender, setGender] = useState('Male');
-  const [rating, setRating] = useState(5.0);
+  const [rating, setRating] = useState(0);
 
   // Dual-mode selectors: 'select' = predefined dropdown, 'custom' = free text entry
   const [specialtyMode, setSpecialtyMode] = useState('select');
@@ -124,7 +124,7 @@ export default function AdminDashboard({
       city: city || 'D.I.K',
       zone: zone,
       gender: gender,
-      rating: parseFloat(rating) || 5.0
+      rating: typeof rating === 'number' ? rating : (parseFloat(rating) || 0)
     });
 
     handleReset();
@@ -141,7 +141,7 @@ export default function AdminDashboard({
     setCity(doc.city || 'D.I.K');
     setZone(doc.zone || '');
     setGender(doc.gender || 'Male');
-    setRating(doc.rating || 5.0);
+    setRating(doc.rating || 0);
   };
 
   const handleReset = () => {
@@ -155,7 +155,7 @@ export default function AdminDashboard({
     setCity('D.I.K');
     setZone('');
     setGender('Male');
-    setRating(5.0);
+    setRating(0);
     setShowPin(false);
   };
 

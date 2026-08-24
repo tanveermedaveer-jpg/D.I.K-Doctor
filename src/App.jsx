@@ -528,6 +528,8 @@ export default function App() {
         id: `doc-${Date.now()}`,
         isOnLeave: false,
         isActive: true,
+        rating: typeof details.rating === 'number' ? details.rating : 0,
+        ratingCount: 0,
         banner: 'bg-gradient-to-r from-teal-500 to-green-500',
         currentServing: 0,
         queue: []
