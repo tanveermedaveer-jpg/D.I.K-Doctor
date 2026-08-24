@@ -574,24 +574,18 @@ export default function App() {
     const docIndex = doctors.findIndex(d => d.id === docId);
     if (docIndex === -1) return;
     const doc = doctors[docIndex];
-    const currentRating = typeof doc.rating === 'number' ? doc.rating : 0;
-    const count = doc.ratingCount || 0;
     
-    let updatedAvg = ratingVal;
-    if (count > 0 && currentRating > 0) {
-      updatedAvg = parseFloat(((currentRating * count + ratingVal) / (count + 1)).toFixed(1));
-    }
-    
+    const updatedRating = ratingVal; // Direct rating state N.0 (e.g. 3 -> 3.0)
     const updatedDocs = [...doctors];
     updatedDocs[docIndex] = {
       ...doc,
-      rating: updatedAvg,
-      ratingCount: count + 1
+      rating: updatedRating,
+      ratingCount: (doc.ratingCount || 0) + 1
     };
     setDoctors(updatedDocs);
     saveDoctors(updatedDocs);
-    addActivityLog(`User rated ${doc.name}: ${ratingVal} stars (New Avg: ${updatedAvg})`);
-    triggerToast(`Thank you! Rated ${doc.name} ${ratingVal} ⭐`, "fa-star text-amber-400");
+    addActivityLog(`User rated ${doc.name}: ${ratingVal} stars`);
+    triggerToast(`Thank you! Rated ${doc.name} ${ratingVal}.0 ⭐`, "fa-star text-amber-400");
   };
 
   const handleDeleteComplaint = (compId) => {
@@ -830,6 +824,41 @@ export default function App() {
                   <span>{language === 'ur' ? 'ڈاکٹر فی الحال تاخیر کا شکار ہیں' : 'Doctor temporarily delayed'}</span>
                 </div>
               )}
+
+              {/* Doctor Star Rating Container */}
+              <div className="flex items-center justify-between gap-2 p-3.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-850">
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                  <i className="fa-solid fa-star text-amber-400"></i>
+                  <span>{language === 'ur' ? 'معالج کی ریٹنگ:' : 'Doctor Rating:'}</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map(star => {
+                      const isFilled = star <= Math.round(selectedDoc.rating || 0);
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => {
+                            handleRateDoctor(selectedDoc.id, star);
+                            setSelectedDoc(prev => ({
+                              ...prev,
+                              rating: star
+                            }));
+                          }}
+                          className="hover:scale-125 transition-transform p-0.5 focus:outline-none"
+                          title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                        >
+                          <i className={`fa-solid fa-star ${isFilled ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600'}`}></i>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <span className={`font-extrabold text-xs ${selectedDoc.rating > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-slate-400'}`}>
+                    {selectedDoc.rating && selectedDoc.rating > 0 ? selectedDoc.rating.toFixed(1) : '0.0'}
+                  </span>
+                </div>
+              </div>
 
               <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-955 p-4 rounded-2xl border border-slate-100 dark:border-slate-850">
                 <div>
