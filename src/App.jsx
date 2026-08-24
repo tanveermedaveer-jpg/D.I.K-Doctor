@@ -12,7 +12,8 @@ import {
   getLogs, saveLogs, 
   getComplaints, saveComplaints, 
   getActiveUser, saveActiveUser,
-  getDarkMode, saveDarkMode 
+  getDarkMode, saveDarkMode,
+  getDeviceSessionId, getUserSessionPhone, saveUserSessionPhone
 } from './services/storage';
 import { startVoiceSearch } from './services/speech';
 
@@ -68,6 +69,7 @@ export default function App() {
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [tokenHistory, setTokenHistory] = useState([]);
+  const [userPhone, setUserPhone] = useState(() => getUserSessionPhone());
 
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [generatedSlip, setGeneratedSlip] = useState(null);
@@ -84,14 +86,20 @@ export default function App() {
     setComplaints(getComplaints());
     setCurrentUser(getActiveUser());
     
-    // Recovery & 24-Hour Expiry Logic for Token History
+    // Device-Isolated Recovery & 24-Hour Expiry Logic for Token History
     try {
       const stored = localStorage.getItem('dik_token_history');
+      const devId = getDeviceSessionId();
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
           const now = Date.now();
-          const activeHistory = parsed.filter(t => t && t.createdAt && (now - t.createdAt <= 86400000));
+          const activeHistory = parsed
+            .filter(t => t && t.createdAt && (now - t.createdAt <= 86400000))
+            .map(t => ({
+              ...t,
+              deviceSessionId: t.deviceSessionId || devId
+            }));
           setTokenHistory(activeHistory);
           localStorage.setItem('dik_token_history', JSON.stringify(activeHistory));
         }
@@ -289,9 +297,14 @@ export default function App() {
     addActivityLog(`Token #${newToken.tokenNumber} generated online for ${doc.name} (Patient: ${displayPatientName}).`);
     setIsTokenOpen(false);
 
-    // Save to Token History in Local Storage
+    // Save to Token History in Local Storage with deviceSessionId & user phone isolation
+    const devId = getDeviceSessionId();
+    saveUserSessionPhone(newToken.patientPhone);
+    setUserPhone(newToken.patientPhone);
+
     const historyItem = {
       id: `history-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      deviceSessionId: devId,
       docName: doc.name,
       specialty: doc.specialty,
       tokenNumber: newToken.tokenNumber,
@@ -1003,112 +1016,145 @@ export default function App() {
       )}
 
       {/* My History Modal */}
-      {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-x-hidden">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden text-left flex flex-col max-h-[90vh]">
-            
-            {/* Header */}
-            <div className="bg-slate-50 dark:bg-slate-955 p-4 sm:p-5 border-b border-slate-100 dark:border-slate-850 flex justify-between items-center shrink-0">
-              <div>
-                <h2 className="text-xs sm:text-sm font-extrabold text-slate-500 dark:text-slate-400 uppercase">
-                  {language === 'ur' ? '📜 میرے قطار ٹوکنز' : '📜 My Booked Tokens'}
-                </h2>
-                <p className="text-[10px] text-slate-400 mt-0.5">
-                  {language === 'ur' ? 'آخری 24 گھنٹے کی معلومات' : 'Booking history of last 24 hours'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => { setIsHistoryOpen(false); setHistorySearch(''); }} 
-                  className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all"
-                >
-                  <i className="fa-solid fa-xmark"></i>
-                </button>
-              </div>
-            </div>
+      {isHistoryOpen && (() => {
+        const activeDevId = getDeviceSessionId();
+        const activePhone = (currentUser?.phone || userPhone || historySearch).trim().replace(/\D/g, '');
 
-            {/* Search filter within drawer */}
-            <div className="p-4 bg-slate-50 dark:bg-slate-955 border-b border-slate-100 dark:border-slate-850 shrink-0">
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs">
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input 
-                  type="text"
-                  value={historySearch}
-                  onChange={(e) => setHistorySearch(e.target.value)}
-                  placeholder={language === 'ur' ? 'ڈاکٹر، مریض کا نام یا فون نمبر تلاش کریں...' : 'Search by doctor, patient, phone...'}
-                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 outline-none focus:ring-2 focus:ring-green-500 dark:text-slate-100 text-left"
-                />
-              </div>
-            </div>
+        // 1. Strict Isolation Filter:
+        // Only return tokens that belong to this device session AND match patient phone if phone is active
+        const isolatedHistory = tokenHistory.filter(item => {
+          if (!item) return false;
+          
+          const isSameDevice = item.deviceSessionId ? item.deviceSessionId === activeDevId : true;
+          const itemPhoneDigits = (item.patientPhone || '').replace(/\D/g, '');
 
-            {/* List Body */}
-            <div className="p-4 sm:p-6 overflow-y-auto space-y-3.5 flex-1">
-              {tokenHistory.filter(item => {
-                if (!item) return false;
-                const query = historySearch.toLowerCase().trim();
-                if (!query) return true;
-                return (
-                  (item.docName && item.docName.toLowerCase().includes(query)) ||
-                  (item.patientName && item.patientName.toLowerCase().includes(query)) ||
-                  (item.patientPhone && item.patientPhone.toLowerCase().includes(query)) ||
-                  (item.tokenNumber && item.tokenNumber.toString().includes(query))
-                );
-              }).length === 0 ? (
-                <div className="text-center py-12 text-slate-400 dark:text-slate-500">
-                  <i className="fa-solid fa-folder-open text-3xl mb-2"></i>
-                  <p className="text-xs font-semibold">
-                    {language === 'ur' ? 'کوئی ریکارڈ نہیں ملا۔' : 'No bookings matched.'}
+          // If a user phone is active (or entered in search), require exact phone match for privacy!
+          if (activePhone) {
+            return isSameDevice && itemPhoneDigits === activePhone;
+          }
+
+          return isSameDevice;
+        });
+
+        // 2. Additional keyword filter if user types in search
+        const displayHistory = isolatedHistory.filter(item => {
+          if (!item) return false;
+          const query = historySearch.toLowerCase().trim();
+          if (!query) return true;
+          return (
+            (item.docName && item.docName.toLowerCase().includes(query)) ||
+            (item.patientName && item.patientName.toLowerCase().includes(query)) ||
+            (item.patientPhone && item.patientPhone.toLowerCase().includes(query)) ||
+            (item.tokenNumber && item.tokenNumber.toString().includes(query))
+          );
+        });
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-x-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden text-left flex flex-col max-h-[90vh]">
+              
+              {/* Header */}
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center shrink-0">
+                <div>
+                  <h2 className="text-xs sm:text-sm font-extrabold text-slate-700 dark:text-slate-200 uppercase flex items-center gap-1.5">
+                    <i className="fa-solid fa-user-lock text-green-500"></i>
+                    <span>{language === 'ur' ? 'میرے ذاتی ٹوکنز' : 'My Booked Tokens'}</span>
+                  </h2>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {language === 'ur' ? 'راز داری کے ساتھ صرف آپ کی اپنی بکنگ ہسٹری' : 'Strictly isolated to your device & account'}
                   </p>
                 </div>
-              ) : (
-                tokenHistory.filter(item => {
-                  if (!item) return false;
-                  const query = historySearch.toLowerCase().trim();
-                  if (!query) return true;
-                  return (
-                    (item.docName && item.docName.toLowerCase().includes(query)) ||
-                    (item.patientName && item.patientName.toLowerCase().includes(query)) ||
-                    (item.patientPhone && item.patientPhone.toLowerCase().includes(query)) ||
-                    (item.tokenNumber && item.tokenNumber.toString().includes(query))
-                  );
-                }).map(item => (
-                  <div key={item.id} className="p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 rounded-2xl flex items-center justify-between gap-3 shadow-inner">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-xs text-slate-800 dark:text-slate-205 truncate">{item.docName}</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium shrink-0">{item.specialty}</span>
-                      </div>
-                      <div className="text-[10px] text-slate-500 mt-1 space-y-0.5">
-                        <p>{language === 'ur' ? 'مریض:' : 'Patient:'} <span className="font-bold text-slate-705 dark:text-slate-300">{item.patientName}</span></p>
-                        <p className="font-mono text-[9px]">{item.patientPhone}</p>
-                      </div>
-                    </div>
-                    <div className="text-center shrink-0">
-                      <span className="block text-[9px] uppercase font-bold text-slate-400 leading-none mb-1">{language === 'ur' ? 'ٹوکن نمبر' : 'Token'}</span>
-                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-500 text-white font-extrabold text-sm sm:text-base shadow shadow-green-500/10">
-                        {item.tokenNumber < 10 ? `0${item.tokenNumber}` : item.tokenNumber}
-                      </span>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => { setIsHistoryOpen(false); setHistorySearch(''); }} 
+                    className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              {/* Privacy Security Status Bar */}
+              <div className="px-4 py-2 bg-teal-500/10 dark:bg-teal-500/20 border-b border-teal-500/20 flex items-center justify-between text-[11px] font-bold text-teal-600 dark:text-teal-400 shrink-0">
+                <span className="flex items-center gap-1.5">
+                  <i className="fa-solid fa-shield-halved"></i>
+                  <span>{language === 'ur' ? 'شخصی راز داری فعال ہے' : 'Privacy Protection Active'}</span>
+                </span>
+                {(userPhone || currentUser?.phone) && (
+                  <span className="font-mono text-[10px] bg-teal-500/20 px-2 py-0.5 rounded-full">
+                    {currentUser?.phone || userPhone}
+                  </span>
+                )}
+              </div>
+
+              {/* Search / Phone Filter input within drawer */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                  </span>
+                  <input 
+                    type="text"
+                    value={historySearch}
+                    onChange={(e) => setHistorySearch(e.target.value)}
+                    placeholder={language === 'ur' ? 'اپنا موبائل نمبر یا ڈاکٹر سرچ کریں...' : 'Search or filter by your mobile number...'}
+                    className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-400 outline-none focus:ring-2 focus:ring-green-500 text-left"
+                  />
+                </div>
+              </div>
+
+              {/* List Body */}
+              <div className="p-4 sm:p-6 overflow-y-auto space-y-3.5 flex-1">
+                {displayHistory.length === 0 ? (
+                  <div className="text-center py-12 text-slate-400 dark:text-slate-500 space-y-2">
+                    <i className="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-700"></i>
+                    <p className="text-xs font-extrabold text-slate-600 dark:text-slate-300">
+                      {language === 'ur' ? 'آپ کی کوئی پرانی بکنگ موجود نہیں ہے۔' : 'No booked tokens found for your session.'}
+                    </p>
+                    <p className="text-[10px] text-slate-400 max-w-xs mx-auto">
+                      {language === 'ur' 
+                        ? 'مریضوں کی راز داری کے تحفظ کی خاطر صرف آپ کے اپنے نمبر اور ڈیوائس کی ہسٹری دکھائی جاتی ہے۔'
+                        : 'To maintain strict patient privacy, booking history is completely isolated to your device and mobile number.'}
+                    </p>
                   </div>
-                ))
-              )}
-            </div>
+                ) : (
+                  displayHistory.map(item => (
+                    <div key={item.id} className="p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center justify-between gap-3 shadow-inner">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">{item.docName}</span>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium shrink-0">{item.specialty}</span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 space-y-0.5">
+                          <p>{language === 'ur' ? 'مریض:' : 'Patient:'} <span className="font-bold text-slate-700 dark:text-slate-200">{item.patientName}</span></p>
+                          <p className="font-mono text-[9px]">{item.patientPhone}</p>
+                        </div>
+                      </div>
+                      <div className="text-center shrink-0">
+                        <span className="block text-[9px] uppercase font-bold text-slate-400 leading-none mb-1">{language === 'ur' ? 'ٹوکن نمبر' : 'Token'}</span>
+                        <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-500 text-white font-extrabold text-sm sm:text-base shadow shadow-green-500/10">
+                          {item.tokenNumber < 10 ? `0${item.tokenNumber}` : item.tokenNumber}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
 
-            {/* Footer */}
-            <div className="p-4 bg-slate-50 dark:bg-slate-955 border-t border-slate-100 dark:border-slate-850 text-right shrink-0">
-              <button 
-                onClick={() => { setIsHistoryOpen(false); setHistorySearch(''); }} 
-                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl shadow transition-colors"
-              >
-                {language === 'ur' ? 'ٹھیک ہے' : 'Dismiss'}
-              </button>
-            </div>
+              {/* Footer */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-right shrink-0">
+                <button 
+                  onClick={() => setIsHistoryOpen(false)} 
+                  className="px-4 py-2 bg-green-500 text-white font-bold text-xs rounded-xl hover:bg-green-600 transition-colors shadow"
+                >
+                  {language === 'ur' ? 'بند کریں' : 'Close History'}
+                </button>
+              </div>
 
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Privacy Policy Modal */}
       {isPrivacyOpen && (

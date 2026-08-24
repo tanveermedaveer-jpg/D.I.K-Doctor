@@ -250,3 +250,34 @@ export const getDarkMode = () => {
 export const saveDarkMode = (isDark) => {
   localStorage.setItem('dik_dark_mode', String(isDark));
 };
+
+export const getDeviceSessionId = () => {
+  try {
+    let id = localStorage.getItem('dik_device_session_id');
+    if (!id) {
+      id = `dev-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      localStorage.setItem('dik_device_session_id', id);
+    }
+    return id;
+  } catch (e) {
+    return 'dev-default';
+  }
+};
+
+export const getUserSessionPhone = () => {
+  try {
+    return localStorage.getItem('dik_user_session_phone') || '';
+  } catch (e) {
+    return '';
+  }
+};
+
+export const saveUserSessionPhone = (phone) => {
+  try {
+    if (phone) {
+      localStorage.setItem('dik_user_session_phone', phone.trim());
+    }
+  } catch (e) {
+    console.error("Failed to save user session phone", e);
+  }
+};
