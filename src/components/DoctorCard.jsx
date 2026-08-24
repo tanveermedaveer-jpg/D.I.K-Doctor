@@ -22,10 +22,10 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language })
       
       {/* 1. Expand doctor card top banner container height to h-40 */}
       <div className="w-full h-40 relative overflow-hidden shadow-inner shrink-0">
-        {doc.banner.startsWith('bg-') ? (
+        {doc.banner && doc.banner.startsWith('bg-') ? (
           <div className={`w-full h-full ${doc.banner}`}></div>
         ) : (
-          <img src={doc.banner} alt="Clinic Banner" className="w-full h-full object-cover" />
+          <img src={doc.banner || ''} alt="Clinic Banner" className="w-full h-full object-cover" />
         )}
         <div className="absolute inset-0 bg-black/15"></div>
       </div>

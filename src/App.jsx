@@ -728,9 +728,9 @@ export default function App() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden">
             <div 
               className={`h-32 relative flex items-end p-4 ${
-                selectedDoc.banner.startsWith('bg-') ? selectedDoc.banner : 'bg-cover bg-center'
+                selectedDoc.banner && selectedDoc.banner.startsWith('bg-') ? selectedDoc.banner : 'bg-cover bg-center'
               }`}
-              style={selectedDoc.banner.startsWith('bg-') ? {} : { backgroundImage: `url('${selectedDoc.banner}')` }}
+              style={selectedDoc.banner && selectedDoc.banner.startsWith('bg-') ? {} : { backgroundImage: `url('${selectedDoc.banner || ''}')` }}
             >
               <div className="absolute inset-0 bg-black/25"></div>
               <button 

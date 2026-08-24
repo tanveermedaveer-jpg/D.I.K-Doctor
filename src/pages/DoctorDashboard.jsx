@@ -84,9 +84,9 @@ export default function DoctorDashboard({
   // Profile inputs
   const [docName, setDocName] = useState(doc.name);
   const [specialty, setSpecialty] = useState(doc.specialty || '');
-  const [tempBanner, setTempBanner] = useState(doc.banner);
+  const [tempBanner, setTempBanner] = useState(doc.banner || '');
   const [tempAvatar, setTempAvatar] = useState(doc.avatar || '');
-  const [bannerUrl, setBannerUrl] = useState(doc.banner.startsWith('data:') || doc.banner.startsWith('bg-') ? '' : doc.banner);
+  const [bannerUrl, setBannerUrl] = useState(doc.banner && (doc.banner.startsWith('data:') || doc.banner.startsWith('bg-')) ? '' : doc.banner || '');
   const [hidePhone, setHidePhone] = useState(doc.hidePhone || false);
   
   // Schedule inputs
@@ -105,9 +105,9 @@ export default function DoctorDashboard({
   useEffect(() => {
     setDocName(doc.name);
     setSpecialty(doc.specialty || '');
-    setTempBanner(doc.banner);
+    setTempBanner(doc.banner || '');
     setTempAvatar(doc.avatar || '');
-    setBannerUrl(doc.banner.startsWith('data:') || doc.banner.startsWith('bg-') ? '' : doc.banner);
+    setBannerUrl(doc.banner && (doc.banner.startsWith('data:') || doc.banner.startsWith('bg-')) ? '' : doc.banner || '');
     setHidePhone(doc.hidePhone || false);
     setFee(doc.fee);
     setTimings(doc.timings);
@@ -189,10 +189,10 @@ export default function DoctorDashboard({
         
         {/* Banner Container: w-full h-44 sm:h-60 object-cover rounded-xl */}
         <div className="w-full h-44 sm:h-60 rounded-xl overflow-hidden relative shadow-inner">
-          {tempBanner.startsWith('bg-') ? (
+          {tempBanner && tempBanner.startsWith('bg-') ? (
             <div className={`w-full h-full ${tempBanner}`}></div>
           ) : (
-            <img src={tempBanner} alt="Clinic Banner" className="w-full h-full object-cover" />
+            <img src={tempBanner || ''} alt="Clinic Banner" className="w-full h-full object-cover" />
           )}
           <div className="absolute inset-0 bg-black/15"></div>
           <span className="absolute bottom-3 left-3 text-[10px] text-white/90 bg-black/45 px-2.5 py-0.5 rounded-full font-bold">
