@@ -231,9 +231,9 @@ export default function AdminDashboard({
 
                 {/* --- Specialty: dual-mode selector --- */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1">
                     <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">Specialty Category</label>
-                    <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                    <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 text-[10px] font-bold self-start sm:self-auto">
                       <button
                         type="button"
                         onClick={() => { setSpecialtyMode('select'); setSpecialty(''); }}
@@ -281,9 +281,9 @@ export default function AdminDashboard({
 
                 {/* --- Zone: dual-mode selector --- */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1">
                     <label className="text-xs font-semibold text-slate-600 dark:text-slate-400">D.I.K Local Medical Zone</label>
-                    <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                    <div className="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 text-[10px] font-bold self-start sm:self-auto">
                       <button
                         type="button"
                         onClick={() => { setZoneMode('select'); setZone(''); }}
@@ -405,7 +405,9 @@ export default function AdminDashboard({
             {/* Registry List Table */}
             <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
               <h2 className="text-xs font-extrabold uppercase text-slate-500 dark:text-slate-400 tracking-wider">Active Doctor Directories</h2>
-              <div className="overflow-x-auto">
+              
+              {/* Desktop Table View (hidden on mobile) */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold">
@@ -474,6 +476,71 @@ export default function AdminDashboard({
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile Stacked Card View (hidden on desktop) */}
+              <div className="block md:hidden space-y-4">
+                {doctors.map(doc => {
+                  if (!doc) return null;
+                  return (
+                    <div key={doc.id} className="p-4 rounded-2xl border border-slate-100 dark:border-slate-805 bg-slate-50/50 dark:bg-slate-850/10 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-extrabold text-sm text-slate-850 dark:text-slate-100 flex items-center gap-1">
+                            {doc.name}
+                            {doc.isOnLeave && (
+                              <span className="text-[9px] bg-red-100 dark:bg-red-950 text-red-500 px-1.5 py-0.5 rounded font-semibold">Leave</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-655 dark:text-slate-400 font-semibold mt-0.5">
+                            {doc.specialty} <span className="text-slate-400 font-normal">({doc.zone || 'N/A'})</span>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                          <input 
+                            type="checkbox" 
+                            checked={doc.isActive !== false} 
+                            onChange={() => onToggleActive(doc.id)} 
+                            className="sr-only peer"
+                          />
+                          <div className="w-8.5 h-4.5 bg-slate-350 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400">
+                        <div>
+                          <span className="block font-medium">Phone: <span className="font-mono">{doc.phone}</span></span>
+                          <span className="block font-medium">PIN: <span className="font-mono">{doc.pin}</span></span>
+                          <span className="block font-semibold">Gender: {doc.gender || 'Male'}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="block font-medium">{doc.timings}</span>
+                          <span className="block font-extrabold text-green-600 dark:text-green-400 text-xs mt-0.5">${doc.fee} Fee</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <button onClick={() => handleEdit(doc)} className="flex-1 py-2 bg-blue-500/10 text-blue-550 hover:bg-blue-500 hover:text-white rounded-xl transition-all font-bold text-xs">
+                          <i className="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <button onClick={() => {
+                          if (window.confirm("Are you sure you want to revoke this doctor's login access?")) {
+                            onDeleteDoctor(doc.id);
+                          }
+                        }} className="flex-1 py-2 bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white rounded-xl transition-all font-bold text-xs">
+                          Revoke
+                        </button>
+                        <button onClick={() => {
+                          if (window.confirm("Are you sure you want to permanently remove this doctor from the registry?")) {
+                            onDeleteDoctor(doc.id);
+                          }
+                        }} className="flex-1 py-2 bg-red-500/10 text-red-550 hover:bg-red-500 hover:text-white rounded-xl transition-all font-bold text-xs">
+                          🗑️ Delete
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
