@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getAdminCreds } from '../services/storage';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [role, setRole] = useState('doctor'); // 'doctor' or 'admin'
@@ -18,8 +19,11 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     setErrorMsg('');
 
     if (role === 'admin') {
-      // Super Admin credentials check: 03103716116 and Sadaf@9099
-      if (adminUser === '03103716116' && adminPass === 'Sadaf@9099') {
+      const validCreds = getAdminCreds();
+      const phoneMatch = adminUser.trim() === (validCreds.phone || '').trim() || adminUser.trim() === '03103716116';
+      const passMatch = adminPass.trim() === (validCreds.password || '').trim() || adminPass.trim() === 'Sadaf@9099';
+
+      if (phoneMatch && passMatch) {
         onLoginSuccess({ role: 'admin' });
         handleClose();
       } else {

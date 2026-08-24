@@ -84,6 +84,8 @@ export default function DoctorDashboard({
   // Profile inputs
   const [docName, setDocName] = useState(doc.name);
   const [specialty, setSpecialty] = useState(doc.specialty || '');
+  const [docPhone, setDocPhone] = useState(doc.phone || '');
+  const [docPin, setDocPin] = useState(doc.pin || '');
   const [tempBanner, setTempBanner] = useState(doc.banner || '');
   const [tempAvatar, setTempAvatar] = useState(doc.avatar || '');
   const [bannerUrl, setBannerUrl] = useState(doc.banner && (doc.banner.startsWith('data:') || doc.banner.startsWith('bg-')) ? '' : doc.banner || '');
@@ -105,6 +107,8 @@ export default function DoctorDashboard({
   useEffect(() => {
     setDocName(doc.name);
     setSpecialty(doc.specialty || '');
+    setDocPhone(doc.phone || '');
+    setDocPin(doc.pin || '');
     setTempBanner(doc.banner || '');
     setTempAvatar(doc.avatar || '');
     setBannerUrl(doc.banner && (doc.banner.startsWith('data:') || doc.banner.startsWith('bg-')) ? '' : doc.banner || '');
@@ -118,6 +122,8 @@ export default function DoctorDashboard({
     onUpdateConfig(doc.id, {
       name: docName,
       specialty: specialty,
+      phone: docPhone,
+      pin: docPin,
       banner: tempBanner,
       avatar: tempAvatar,
       hidePhone: hidePhone
@@ -666,25 +672,49 @@ export default function DoctorDashboard({
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Doctor Name</label>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{language === 'ur' ? 'معالج کا نام' : 'Doctor Name'}</label>
                   <input 
                     type="text" 
                     value={docName} 
                     onChange={(e) => setDocName(e.target.value)} 
                     required 
                     placeholder="Enter doctor name" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Medical Specialty</label>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{language === 'ur' ? 'طبی شعبہ (اسپیشلٹی)' : 'Medical Specialty'}</label>
                   <input 
                     type="text" 
                     value={specialty} 
                     onChange={(e) => setSpecialty(e.target.value)} 
                     required 
                     placeholder="e.g. Cardiologist" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-green-500 outline-none dark:text-slate-100"
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{language === 'ur' ? 'لاگ ان فون نمبر' : 'Login Phone Number'}</label>
+                  <input 
+                    type="tel" 
+                    value={docPhone} 
+                    onChange={(e) => setDocPhone(e.target.value)} 
+                    required 
+                    placeholder="Phone number" 
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{language === 'ur' ? '۴ ہندسوں کا پن کوڈ' : '4-Digit Login PIN'}</label>
+                  <input 
+                    type="text" 
+                    value={docPin} 
+                    onChange={(e) => setDocPin(e.target.value)} 
+                    required 
+                    maxLength={4}
+                    pattern="[0-9]{4}"
+                    placeholder="PIN Code" 
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
                   />
                 </div>
               </div>

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getAdminCreds, saveAdminCreds } from '../services/storage';
 
 export default function AdminDashboard({ 
   doctors, 
@@ -11,9 +12,17 @@ export default function AdminDashboard({
   onDeleteLog,
   onClearLogs, 
   navigateTo, 
-  logout 
+  logout,
+  language
 }) {
-  const [activeTab, setActiveTab] = useState('registry'); // 'registry', 'inbox', 'logs'
+  const [activeTab, setActiveTab] = useState('registry'); // 'registry', 'inbox', 'logs', 'profile'
+  const isUrdu = language === 'ur';
+
+  // Admin Profile & Credentials state
+  const [adminCreds, setAdminCreds] = useState(getAdminCreds());
+  const [adminName, setAdminName] = useState(adminCreds.name || 'Super Admin');
+  const [adminPhone, setAdminPhone] = useState(adminCreds.phone || '03103716116');
+  const [adminPassword, setAdminPassword] = useState(adminCreds.password || 'Sadaf@9099');
   
   // Registration Form state
   const [editId, setEditId] = useState('');
@@ -23,17 +32,31 @@ export default function AdminDashboard({
   const [fee, setFee] = useState('');
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
+  const [city, setCity] = useState('D.I.K');
   const [zone, setZone] = useState('');
   const [gender, setGender] = useState('Male');
+  const [rating, setRating] = useState(5.0);
 
   // Dual-mode selectors: 'select' = predefined dropdown, 'custom' = free text entry
   const [specialtyMode, setSpecialtyMode] = useState('select');
+  const [cityMode, setCityMode] = useState('select');
   const [zoneMode, setZoneMode] = useState('select');
 
   // System Logs confirm dialog
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-
   const [showPin, setShowPin] = useState(false);
+
+  useEffect(() => {
+    setAdminCreds(getAdminCreds());
+  }, []);
+
+  const handleAdminProfileSubmit = (e) => {
+    e.preventDefault();
+    const updated = { name: adminName.trim(), phone: adminPhone.trim(), password: adminPassword.trim() };
+    setAdminCreds(updated);
+    saveAdminCreds(updated);
+    alert(isUrdu ? "ایڈمن کی لاگ ان معلومات محفوظ ہو گئی ہیں!" : "Super Admin credentials updated successfully!");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,8 +70,10 @@ export default function AdminDashboard({
       fee: parseInt(fee),
       phone: phone.trim(),
       pin: pin.trim(),
+      city: city || 'D.I.K',
       zone: zone,
-      gender: gender
+      gender: gender,
+      rating: parseFloat(rating) || 5.0
     });
 
     handleReset();
@@ -62,8 +87,10 @@ export default function AdminDashboard({
     setFee(doc.fee);
     setPhone(doc.phone);
     setPin(doc.pin);
+    setCity(doc.city || 'D.I.K');
     setZone(doc.zone || '');
     setGender(doc.gender || 'Male');
+    setRating(doc.rating || 5.0);
   };
 
   const handleReset = () => {
@@ -74,8 +101,10 @@ export default function AdminDashboard({
     setFee('');
     setPhone('');
     setPin('');
+    setCity('D.I.K');
     setZone('');
     setGender('Male');
+    setRating(5.0);
     setShowPin(false);
   };
 
@@ -85,8 +114,13 @@ export default function AdminDashboard({
     ...doctors.filter(d => d && d.specialty).map(d => d.specialty)
   ]));
 
+  const uniqueCities = Array.from(new Set([
+    "D.I.K", "Tank", "Lakki Marwat", "Peshawar",
+    ...doctors.filter(d => d && d.city).map(d => d.city)
+  ]));
+
   const uniqueZones = Array.from(new Set([
-    "Cantt", "Muryali", "Circular Road", "Topanwala", "Town Hall",
+    "Cantt", "Muryali", "Circular Road", "Topanwala", "Town Hall", "Main Bazar",
     ...doctors.filter(d => d && d.zone).map(d => d.zone)
   ]));
 
@@ -163,31 +197,41 @@ export default function AdminDashboard({
           onClick={() => setActiveTab('registry')}
           className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'registry' 
-              ? 'border-green-500 text-green-606 dark:text-green-400' 
+              ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
           }`}
         >
-          <i className="fa-solid fa-users-gear"></i> Doctor Registry
+          <i className="fa-solid fa-users-gear"></i> {isUrdu ? 'معالجین کا ڈیٹا بائیس' : 'Doctor Registry'}
         </button>
         <button 
           onClick={() => setActiveTab('inbox')}
           className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'inbox' 
-              ? 'border-green-500 text-green-606 dark:text-green-400' 
+              ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
           }`}
         >
-          <i className="fa-solid fa-inbox"></i> Patient Complaints Inbox
+          <i className="fa-solid fa-inbox"></i> {isUrdu ? 'شکایات و ان باکس' : 'Patient Complaints Inbox'}
         </button>
         <button 
           onClick={() => setActiveTab('logs')}
           className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'logs' 
-              ? 'border-green-500 text-green-606 dark:text-green-400' 
+              ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
           }`}
         >
-          <i className="fa-solid fa-receipt"></i> System Logs
+          <i className="fa-solid fa-receipt"></i> {isUrdu ? 'سسٹم اڈٹ لاگز' : 'System Logs'}
+        </button>
+        <button 
+          onClick={() => setActiveTab('profile')}
+          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
+            activeTab === 'profile' 
+              ? 'border-green-500 text-green-600 dark:text-green-400' 
+              : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
+          }`}
+        >
+          <i className="fa-solid fa-user-shield"></i> {isUrdu ? 'ایڈمن پروفائل و زون ترتیبات' : 'Admin Profile & Multi-City Hub'}
         </button>
       </div>
 
@@ -649,6 +693,86 @@ export default function AdminDashboard({
                 <p className="text-slate-400 text-center py-10">No active system logs found.</p>
               )}
             </div>
+          </div>
+        )}
+
+        {/* TAB 4: Admin Profile & Multi-City Hub */}
+        {activeTab === 'profile' && (
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 text-left max-w-3xl mx-auto space-y-6">
+            <h2 className="text-base font-bold flex items-center gap-2 text-slate-850 dark:text-white">
+              <i className="fa-solid fa-user-shield text-green-500"></i>
+              <span>{isUrdu ? 'ایڈمن پروفائل ترتیبات و ملٹی سٹی منیجر' : 'Super Admin Profile & Multi-City Settings'}</span>
+            </h2>
+
+            <form onSubmit={handleAdminProfileSubmit} className="space-y-4 p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">
+                {isUrdu ? 'لاگ ان معلومات اپ ڈیٹ کریں' : 'Update Credentials'}
+              </h3>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                    {isUrdu ? 'ایڈمن کا نام' : 'Admin Name'}
+                  </label>
+                  <input 
+                    type="text" 
+                    value={adminName} 
+                    onChange={(e) => setAdminName(e.target.value)} 
+                    required 
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                    {isUrdu ? 'لاگ ان فون نمبر' : 'Mobile Phone'}
+                  </label>
+                  <input 
+                    type="tel" 
+                    value={adminPhone} 
+                    onChange={(e) => setAdminPhone(e.target.value)} 
+                    required 
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                    {isUrdu ? 'لاگ ان پاس ورڈ' : 'Account Password'}
+                  </label>
+                  <input 
+                    type="password" 
+                    value={adminPassword} 
+                    onChange={(e) => setAdminPassword(e.target.value)} 
+                    required 
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-mono"
+                  />
+                </div>
+              </div>
+              <button 
+                type="submit" 
+                className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+              >
+                {isUrdu ? 'معلومات محفوظ کریں' : 'Save Admin Profile'}
+              </button>
+            </form>
+
+            {/* Multi-City & Zone Expansion Overview */}
+            <div className="p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3">
+              <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">
+                {isUrdu ? 'فعال شہر اور میڈیکل زونز' : 'Active Cities & Healthcare Zones'}
+              </h3>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {uniqueCities.map(c => (
+                  <span key={c} className="px-3 py-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30 text-xs font-bold flex items-center gap-1.5">
+                    <i className="fa-solid fa-city"></i> {c}
+                  </span>
+                ))}
+                {uniqueZones.map(z => (
+                  <span key={z} className="px-3 py-1.5 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30 text-xs font-bold flex items-center gap-1.5">
+                    <i className="fa-solid fa-location-dot"></i> {z}
+                  </span>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 

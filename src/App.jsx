@@ -16,12 +16,29 @@ import {
 } from './services/storage';
 import { startVoiceSearch } from './services/speech';
 
-const PAKISTANI_SPECIALTIES = [
-  "Cardiologist", "Gynecologist", "Pediatrician", "Neurologist", "Orthopedic", 
-  "Dermatologist", "ENT", "Ophthalmologist", "Psychiatrist", "Urologist", 
-  "Gastroenterologist", "Pulmonologist", "Nephrologist", "General Physician", 
-  "General Surgeon", "Oncologist", "Endocrinologist", "Radiologist", 
-  "Pathologist", "Anesthesiologist", "Rheumatologist", "Dentist"
+const SPECIALTIES_DATA = [
+  { name: "Cardiologist", icon: "fa-heart-pulse", ur: "امراضِ قلب", bg: "bg-red-50 text-red-500 dark:bg-red-950/40 dark:text-red-400" },
+  { name: "Gynecologist", icon: "fa-baby-carriage", ur: "امراضِ نسواں", bg: "bg-pink-50 text-pink-500 dark:bg-pink-950/40 dark:text-pink-400" },
+  { name: "Pediatrician", icon: "fa-baby", ur: "بچوں کے معالج", bg: "bg-blue-50 text-blue-500 dark:bg-blue-950/40 dark:text-blue-400" },
+  { name: "Neurologist", icon: "fa-brain", ur: "اعصابی امراض", bg: "bg-purple-50 text-purple-500 dark:bg-purple-950/40 dark:text-purple-400" },
+  { name: "Orthopedic", icon: "fa-bone", ur: "ہڈیوں کے معالج", bg: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400" },
+  { name: "Dermatologist", icon: "fa-hand-holding-medical", ur: "جلد کے معالج", bg: "bg-teal-50 text-teal-500 dark:bg-teal-950/40 dark:text-teal-400" },
+  { name: "ENT", icon: "fa-ear-listen", ur: "کان ناک گلا", bg: "bg-indigo-50 text-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-400" },
+  { name: "Ophthalmologist", icon: "fa-eye", ur: "آنکھوں کے معالج", bg: "bg-orange-50 text-orange-500 dark:bg-orange-950/40 dark:text-orange-400" },
+  { name: "Psychiatrist", icon: "fa-head-side-virus", ur: "ماہرِ نفسیات", bg: "bg-rose-50 text-rose-500 dark:bg-rose-950/40 dark:text-rose-400" },
+  { name: "Urologist", icon: "fa-circle-nodes", ur: "امراضِ بول", bg: "bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-400" },
+  { name: "Gastroenterologist", icon: "fa-stethoscope", ur: "معدہ و جگر", bg: "bg-sky-50 text-sky-500 dark:bg-sky-950/40 dark:text-sky-400" },
+  { name: "Pulmonologist", icon: "fa-lungs", ur: "امراضِ ریہ (پھیپھڑے)", bg: "bg-cyan-50 text-cyan-500 dark:bg-cyan-950/40 dark:text-cyan-400" },
+  { name: "Nephrologist", icon: "fa-hospital-user", ur: "امراضِ گردہ", bg: "bg-teal-50 text-teal-600 dark:bg-teal-950/40 dark:text-teal-400" },
+  { name: "General Physician", icon: "fa-user-doctor", ur: "عام معالج", bg: "bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400" },
+  { name: "General Surgeon", icon: "fa-syringe", ur: "جنرل سرجن", bg: "bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400" },
+  { name: "Oncologist", icon: "fa-dna", ur: "کینسر کے ماہر", bg: "bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400" },
+  { name: "Endocrinologist", icon: "fa-flask", ur: "ہارمونز کے ماہر", bg: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400" },
+  { name: "Radiologist", icon: "fa-x-ray", ur: "ریڈیالوجسٹ", bg: "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400" },
+  { name: "Pathologist", icon: "fa-microscope", ur: "پیتھالوجسٹ", bg: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400" },
+  { name: "Anesthesiologist", icon: "fa-capsules", ur: "بے ہوشی کے ماہر", bg: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400" },
+  { name: "Rheumatologist", icon: "fa-child", ur: "جوڑوں کے معالج", bg: "bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-400" },
+  { name: "Dentist", icon: "fa-tooth", ur: "دندان ساز", bg: "bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-400" }
 ];
 
 export default function App() {
@@ -604,6 +621,7 @@ export default function App() {
         onEmergencyClick={() => setIsEmergencyOpen(true)}
         onHistoryClick={() => setIsHistoryOpen(true)}
         language={language}
+        onLanguageChange={setLanguage}
       />
 
       {/* Pages Container */}
@@ -692,28 +710,45 @@ export default function App() {
         onCloseSlip={() => setGeneratedSlip(null)}
       />
 
-      {/* Specialties Full Grid Modal */}
+      {/* Specialties Full Grid Modal with Icons */}
       {isSpecialtiesOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-x-hidden">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden">
-            <div className="bg-slate-50 dark:bg-slate-950 p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-              <h2 className="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase">Pakistani Medical Specialties</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-3xl mx-auto overflow-hidden text-left">
+            <div className="bg-slate-50 dark:bg-slate-950 p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div>
+                <h2 className="text-sm sm:text-base font-black text-slate-850 dark:text-white tracking-tight">
+                  {language === 'ur' ? 'تمام طبی مہارتیں (میڈیکل اسپیشلٹیز)' : 'All Medical Specialties'}
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {language === 'ur' ? 'اپنی مطلوبہ بیماری یا علاج کے مطابق ڈاکٹر منتخب کریں' : 'Select a medical field to filter active specialists'}
+                </p>
+              </div>
               <button 
                 onClick={() => setIsSpecialtiesOpen(false)} 
-                className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all"
+                className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all shrink-0"
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
-            <div className="p-6 overflow-y-auto max-h-96">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {PAKISTANI_SPECIALTIES.map(spec => (
+            <div className="p-6 overflow-y-auto max-h-[75vh]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                {SPECIALTIES_DATA.map(spec => (
                   <button 
-                    key={spec}
-                    onClick={() => { setSelectedSpecialty(spec); setIsSpecialtiesOpen(false); }}
-                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-green-500 hover:bg-green-50/10 text-left text-xs font-bold text-slate-700 dark:text-slate-350 transition-all truncate"
+                    key={spec.name}
+                    onClick={() => { setSelectedSpecialty(spec.name); setIsSpecialtiesOpen(false); }}
+                    className="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-green-500 hover:bg-green-50/20 dark:hover:bg-slate-800 flex items-center gap-3 transition-all text-left group shadow-sm"
                   >
-                    <i className="fa-solid fa-stethoscope text-green-500 mr-2"></i> {spec}
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 group-hover:scale-110 transition-transform ${spec.bg}`}>
+                      <i className={`fa-solid ${spec.icon}`}></i>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-green-600 dark:group-hover:text-green-400">
+                        {language === 'ur' ? spec.ur : spec.name}
+                      </span>
+                      <span className="block text-[10px] text-slate-400 font-medium truncate">
+                        {language === 'ur' ? spec.name : spec.ur}
+                      </span>
+                    </div>
                   </button>
                 ))}
               </div>

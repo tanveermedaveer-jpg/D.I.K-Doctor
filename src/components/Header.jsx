@@ -8,7 +8,8 @@ export default function Header({
   toggleDarkMode, 
   onEmergencyClick,
   onHistoryClick,
-  language
+  language,
+  onLanguageChange
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isUrdu = language === 'ur';
@@ -81,6 +82,18 @@ export default function Header({
 
         {/* Header Right Actions */}
         <div className="flex items-center gap-2">
+          {/* Language Toggle Button */}
+          {onLanguageChange && (
+            <button
+              onClick={() => onLanguageChange(language === 'ur' ? 'en' : 'ur')}
+              className="px-2.5 py-1.5 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30 text-xs font-black transition-all hover:bg-green-500 hover:text-white flex items-center gap-1 shrink-0"
+              title="Toggle Language"
+            >
+              <span>🌐</span>
+              <span>{language === 'ur' ? 'ENG' : 'اردو'}</span>
+            </button>
+          )}
+
           {/* Light/Dark Mode Switch */}
           <button 
             onClick={toggleDarkMode} 
@@ -88,7 +101,7 @@ export default function Header({
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (
-              <i className="fa-solid fa-sun text-lg"></i>
+              <i className="fa-solid fa-sun text-lg text-amber-400"></i>
             ) : (
               <i className="fa-solid fa-moon text-lg"></i>
             )}

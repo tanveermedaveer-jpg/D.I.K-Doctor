@@ -12,7 +12,9 @@ const INITIAL_DOCTORS = [
     banner: "bg-gradient-to-r from-teal-500 to-green-500",
     currentServing: 0,
     queue: [],
-    zone: "Cantt"
+    city: "D.I.K",
+    zone: "Cantt",
+    rating: 5.0
   },
   {
     id: "doc-2",
@@ -27,7 +29,9 @@ const INITIAL_DOCTORS = [
     banner: "bg-gradient-to-r from-purple-600 to-pink-500",
     currentServing: 0,
     queue: [],
-    zone: "Muryali"
+    city: "D.I.K",
+    zone: "Muryali",
+    rating: 4.9
   },
   {
     id: "doc-3",
@@ -42,7 +46,9 @@ const INITIAL_DOCTORS = [
     banner: "bg-gradient-to-r from-blue-600 to-cyan-500",
     currentServing: 0,
     queue: [],
-    zone: "Circular Road"
+    city: "D.I.K",
+    zone: "Circular Road",
+    rating: 4.8
   },
   {
     id: "doc-4",
@@ -57,14 +63,39 @@ const INITIAL_DOCTORS = [
     banner: "bg-gradient-to-r from-amber-500 to-orange-600",
     currentServing: 0,
     queue: [],
-    zone: "Topanwala"
+    city: "D.I.K",
+    zone: "Topanwala",
+    rating: 4.9
   }
 ];
+
+export const getAdminCreds = () => {
+  try {
+    const stored = localStorage.getItem('dik_admin_creds');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed && parsed.phone && parsed.password) return parsed;
+    }
+  } catch (e) {
+    console.error("Failed to parse admin creds from localStorage", e);
+  }
+  const defaults = { name: "Super Admin", phone: "03103716116", password: "Sadaf@9099" };
+  localStorage.setItem('dik_admin_creds', JSON.stringify(defaults));
+  return defaults;
+};
+
+export const saveAdminCreds = (creds) => {
+  try {
+    localStorage.setItem('dik_admin_creds', JSON.stringify(creds));
+  } catch (e) {
+    console.error("Failed to save admin creds to localStorage", e);
+  }
+};
 
 export const getDoctors = () => {
   try {
     const stored = localStorage.getItem('dik_doctors');
-    if (stored) {
+    if (stored !== null) {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed)) return parsed;
     }

@@ -42,30 +42,51 @@ export default function HomePage({
   language 
 }) {
   const [selectedZone, setSelectedZone] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
   const [ladyOnly, setLadyOnly] = useState(false);
+  const [visibleLimit, setVisibleLimit] = useState(6);
   const isUrdu = language === 'ur';
 
-  // Get unique zones dynamically from registered doctors
+  // Get unique cities and zones dynamically from registered doctors
+  const dynamicCities = Array.from(
+    new Set(
+      doctors
+        .filter(d => d && d.isActive !== false && d.city && d.city.trim() !== '')
+        .map(d => d.city.trim())
+    )
+  ).sort();
+
   const dynamicZones = Array.from(
     new Set(
       doctors
         .filter(d => d && d.isActive !== false && d.zone && d.zone.trim() !== '')
+        .filter(d => (selectedCity ? (d.city || 'D.I.K') === selectedCity : true))
         .map(d => d.zone.trim())
     )
   ).sort();
 
-  // Filter active doctors matching search, specialty, zone, and lady specialist filters
+  // Filter active doctors matching search, specialty, city, zone, and lady specialist filters
   const filteredDocs = doctors.filter(doc => {
     if (!doc || doc.isActive === false) return false;
     
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (doc.specialty && doc.specialty.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesSpecialty = selectedSpecialty ? doc.specialty === selectedSpecialty : true;
+    const matchesCity = selectedCity ? (doc.city || 'D.I.K') === selectedCity : true;
     const matchesZone = selectedZone ? doc.zone === selectedZone : true;
     const matchesLady = ladyOnly ? doc.gender === 'Female' : true;
     
-    return matchesSearch && matchesSpecialty && matchesZone && matchesLady;
+    return matchesSearch && matchesSpecialty && matchesCity && matchesZone && matchesLady;
   });
+
+  // Sort doctors by 5-Star rating descending (highest rating first)
+  const sortedDocs = [...filteredDocs].sort((a, b) => {
+    const rA = typeof a.rating === 'number' ? a.rating : 5.0;
+    const rB = typeof b.rating === 'number' ? b.rating : 5.0;
+    return rB - rA;
+  });
+
+  const visibleDocs = sortedDocs.slice(0, visibleLimit);
 
   const activeTokens = doctors.reduce((sum, d) => sum + (d && d.queue ? d.queue.length : 0), 0);
   const activeDoctors = doctors.filter(d => d && d.isActive !== false).length;
@@ -268,7 +289,7 @@ export default function HomePage({
           </div>
         </div>
 
-        {filteredDocs.length === 0 ? (
+        {sortedDocs.length === 0 ? (
           <div className="py-16 flex flex-col items-center justify-center text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800">
             <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-2xl mb-4">
               <i className="fa-solid fa-user-slash"></i>
@@ -276,31 +297,45 @@ export default function HomePage({
             <h3 className="text-lg font-bold">{trans.noDocs}</h3>
             <p className="text-xs text-slate-500 max-w-sm mt-1">{trans.noDocsSub}</p>
             <button 
-              onClick={() => { setSearchQuery(''); setSelectedSpecialty(null); setSelectedZone(null); }} 
+              onClick={() => { setSearchQuery(''); setSelectedSpecialty(null); setSelectedZone(null); setSelectedCity(null); }} 
               className="mt-4 px-4 py-2 bg-green-500 text-white rounded-xl text-xs font-bold shadow hover:bg-green-600 transition-all"
             >
               {trans.resetFilters}
             </button>
           </div>
         ) : (
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredDocs.map((doc) => (
-              <motion.div key={doc.id} variants={itemVariants}>
-                <DoctorCard 
-                  doc={doc}
-                  onViewProfile={() => onViewProfile(doc)}
-                  onGetToken={() => onGetToken(doc)}
-                  language={language}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          <>
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {visibleDocs.map((doc) => (
+                <motion.div key={doc.id} variants={itemVariants}>
+                  <DoctorCard 
+                    doc={doc}
+                    onViewProfile={() => onViewProfile(doc)}
+                    onGetToken={() => onGetToken(doc)}
+                    language={language}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {sortedDocs.length > visibleLimit && (
+              <div className="flex justify-center pt-6">
+                <button
+                  onClick={() => setVisibleLimit(prev => prev + 6)}
+                  className="px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-extrabold text-xs shadow-md hover:border-green-500 hover:text-green-600 transition-all flex items-center gap-2"
+                >
+                  <span>{isUrdu ? `مزید معالجین دیکھیں (${sortedDocs.length - visibleLimit} باقی)` : `Show More Doctors (${sortedDocs.length - visibleLimit} remaining)`}</span>
+                  <i className="fa-solid fa-chevron-down text-green-500 animate-bounce"></i>
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
