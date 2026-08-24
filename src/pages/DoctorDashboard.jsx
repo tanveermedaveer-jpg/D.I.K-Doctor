@@ -234,36 +234,36 @@ export default function DoctorDashboard({
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto w-full whitespace-nowrap scrollbar-none">
+      <div className="flex border-b border-slate-200 dark:border-slate-800 w-full overflow-x-auto scrollbar-none">
         <button 
           onClick={() => setActiveTab('queue')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`flex-1 min-w-[100px] justify-center px-4 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'queue' 
               ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-305'
           }`}
         >
-          <i className="fa-solid fa-people-group"></i> Live Queue
+          <i className="fa-solid fa-people-group"></i> <span className="truncate">Live Queue</span>
         </button>
         <button 
           onClick={() => setActiveTab('profile')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`flex-1 min-w-[100px] justify-center px-4 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'profile' 
               ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-305'
           }`}
         >
-          <i className="fa-solid fa-user-doctor"></i> Profile & Media
+          <i className="fa-solid fa-user-doctor"></i> <span className="truncate">Profile & Media</span>
         </button>
         <button 
           onClick={() => setActiveTab('schedule')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`flex-1 min-w-[100px] justify-center px-4 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'schedule' 
               ? 'border-green-500 text-green-600 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-305'
           }`}
         >
-          <i className="fa-solid fa-calendar-days"></i> Schedule & Fee
+          <i className="fa-solid fa-calendar-days"></i> <span className="truncate">Schedule & Fee</span>
         </button>
       </div>
 

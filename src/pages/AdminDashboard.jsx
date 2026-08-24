@@ -158,10 +158,10 @@ export default function AdminDashboard({
       </div>
 
       {/* Tabs Control Row */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto w-full whitespace-nowrap scrollbar-none">
+      <div className="flex flex-nowrap border-b border-slate-200 dark:border-slate-800 overflow-x-auto w-full whitespace-nowrap scrollbar-none">
         <button 
           onClick={() => setActiveTab('registry')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'registry' 
               ? 'border-green-500 text-green-606 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
@@ -171,7 +171,7 @@ export default function AdminDashboard({
         </button>
         <button 
           onClick={() => setActiveTab('inbox')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'inbox' 
               ? 'border-green-500 text-green-606 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
@@ -181,7 +181,7 @@ export default function AdminDashboard({
         </button>
         <button 
           onClick={() => setActiveTab('logs')}
-          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 ${
+          className={`px-5 py-2.5 font-bold text-xs border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === 'logs' 
               ? 'border-green-500 text-green-606 dark:text-green-400' 
               : 'border-transparent text-slate-500 hover:text-slate-750 dark:hover:text-slate-350'
