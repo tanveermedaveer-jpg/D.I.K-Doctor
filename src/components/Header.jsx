@@ -145,18 +145,61 @@ export default function Header({
             </button>
           </div>
 
-          <div className="flex flex-col gap-4 text-sm font-extrabold text-slate-900 dark:text-slate-100">
-            <button onClick={() => handleNav('home')} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
-              <i className="fa-solid fa-house text-green-550 w-5 text-base"></i> {trans.home}
+          <div className="flex flex-col gap-3">
+            {/* Home Row Card */}
+            <button 
+              onClick={() => handleNav('home')} 
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-850 shadow-sm transition-all group text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 flex items-center justify-center text-sm shrink-0">
+                  <i className="fa-solid fa-house"></i>
+                </div>
+                <span className="font-extrabold text-slate-800 dark:text-slate-100 text-xs sm:text-sm">{trans.home}</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform"></i>
             </button>
-            <button onClick={handleFindDoctors} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
-              <i className="fa-solid fa-user-doctor text-green-550 w-5 text-base"></i> {trans.findDocs}
+
+            {/* Find Doctors Row Card */}
+            <button 
+              onClick={handleFindDoctors} 
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-850 shadow-sm transition-all group text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 flex items-center justify-center text-sm shrink-0">
+                  <i className="fa-solid fa-user-doctor"></i>
+                </div>
+                <span className="font-extrabold text-slate-800 dark:text-slate-100 text-xs sm:text-sm">{trans.findDocs}</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform"></i>
             </button>
-            <button onClick={() => handleAction(onHistoryClick)} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
-              <i className="fa-solid fa-scroll text-green-550 w-5 text-base"></i> {trans.myHistory}
+
+            {/* My History Row Card */}
+            <button 
+              onClick={() => handleAction(onHistoryClick)} 
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-850 shadow-sm transition-all group text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 flex items-center justify-center text-sm shrink-0">
+                  <i className="fa-solid fa-scroll"></i>
+                </div>
+                <span className="font-extrabold text-slate-800 dark:text-slate-100 text-xs sm:text-sm">{trans.myHistory}</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 dark:text-slate-500 group-hover:translate-x-0.5 transition-transform"></i>
             </button>
-            <button onClick={() => handleAction(onEmergencyClick)} className="flex items-center gap-2.5 p-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 text-left transition-colors">
-              <i className="fa-solid fa-truck-medical w-5 text-base animate-pulse"></i> {trans.emergencyDrawer}
+
+            {/* Emergency Row Card */}
+            <button 
+              onClick={() => handleAction(onEmergencyClick)} 
+              className="flex items-center justify-between p-3.5 rounded-2xl bg-red-50 hover:bg-red-100/55 dark:bg-red-955/10 dark:hover:bg-red-955/20 border border-red-100/70 dark:border-red-900/20 shadow-sm transition-all group text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400 flex items-center justify-center text-sm shrink-0">
+                  <i className="fa-solid fa-truck-medical animate-pulse"></i>
+                </div>
+                <span className="font-extrabold text-red-600 dark:text-red-400 text-xs sm:text-sm">{trans.emergencyDrawer}</span>
+              </div>
+              <i className="fa-solid fa-chevron-right text-[10px] text-red-450 dark:text-red-500 group-hover:translate-x-0.5 transition-transform"></i>
             </button>
           </div>
 
