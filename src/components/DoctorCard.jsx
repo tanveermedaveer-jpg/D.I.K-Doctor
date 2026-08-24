@@ -44,7 +44,7 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language })
       )}
 
       {/* 2. Place profile avatar overlapping the banner's bottom edge */}
-      <div className="px-5 -mt-8 relative z-10 flex items-end gap-3.5">
+      <div className="px-5 -mt-8 relative z-10">
         <div className="w-16 h-16 rounded-full border-4 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg font-bold shadow-md overflow-hidden shrink-0">
           {doc.avatar ? (
             <img src={doc.avatar} alt={doc.name} className="w-full h-full object-cover" />
@@ -54,17 +54,19 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language })
             </div>
           )}
         </div>
-        <div className="pt-6 min-w-0 pb-1.5 flex-1">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <h3 className="font-extrabold text-sm sm:text-base text-slate-850 dark:text-slate-100 truncate">{doc.name}</h3>
-            {doc.gender === 'Female' && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-pink-100 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 text-[9px] font-extrabold uppercase tracking-wider shrink-0 border border-pink-200 dark:border-pink-900/30">
-                👩‍⚕️ Lady Specialist
-              </span>
-            )}
-          </div>
-          <span className="text-xs font-semibold text-green-605 dark:text-green-400 block truncate">{doc.specialty}</span>
+      </div>
+
+      {/* 3. Name & Specialty details container completely below */}
+      <div className="px-5 pt-3 pb-1 min-w-0">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <h3 className="font-extrabold text-sm sm:text-base text-slate-850 dark:text-slate-100 truncate">{doc.name}</h3>
+          {doc.gender === 'Female' && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-pink-100 dark:bg-pink-955/40 text-pink-600 dark:text-pink-400 text-[9px] font-extrabold uppercase tracking-wider shrink-0 border border-pink-200 dark:border-pink-900/30">
+              👩‍⚕️ Lady Specialist
+            </span>
+          )}
         </div>
+        <span className="text-xs font-semibold text-green-605 dark:text-green-400 block truncate mt-0.5">{doc.specialty}</span>
       </div>
 
       {doc.isDelayed && (

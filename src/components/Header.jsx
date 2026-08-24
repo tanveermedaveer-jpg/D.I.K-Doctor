@@ -127,51 +127,51 @@ export default function Header({
       </div>
 
       {/* Sliding Mobile Side Drawer Menu */}
-      <div className={`fixed inset-0 z-50 lg:hidden transform transition-transform duration-300 ${
+      <div className={`fixed inset-0 z-[9999] lg:hidden transform transition-transform duration-300 ${
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {/* Backdrop overlay */}
-        <div className="absolute inset-0 bg-black/45 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-none" onClick={() => setMobileMenuOpen(false)}></div>
         
         {/* Drawer panel */}
-        <div className="absolute right-0 top-0 bottom-0 max-w-xs w-full bg-white dark:bg-slate-900 p-6 shadow-2xl flex flex-col space-y-6">
+        <div className="absolute right-0 top-0 bottom-0 max-w-xs w-full bg-white dark:bg-slate-900 p-6 shadow-2xl flex flex-col space-y-6 opacity-100 z-50">
           <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
-            <span className="font-extrabold text-base tracking-tight bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-400 dark:to-teal-400 bg-clip-text text-transparent">{trans.menuTitle}</span>
+            <span className="font-black text-slate-900 dark:text-white text-base tracking-tight">{trans.menuTitle}</span>
             <button 
               onClick={() => setMobileMenuOpen(false)} 
-              className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs"
+              className="w-7 h-7 rounded-full bg-slate-100 hover:bg-red-500 hover:text-white dark:bg-slate-800 flex items-center justify-center text-xs text-slate-700 dark:text-slate-200 transition-all"
             >
               <i className="fa-solid fa-xmark"></i>
             </button>
           </div>
 
-          <div className="flex flex-col gap-4 text-sm font-bold text-slate-700 dark:text-slate-200">
-            <button onClick={() => handleNav('home')} className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left">
-              <i className="fa-solid fa-house text-green-500 w-5"></i> {trans.home}
+          <div className="flex flex-col gap-4 text-sm font-extrabold text-slate-900 dark:text-slate-100">
+            <button onClick={() => handleNav('home')} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
+              <i className="fa-solid fa-house text-green-550 w-5 text-base"></i> {trans.home}
             </button>
-            <button onClick={handleFindDoctors} className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left">
-              <i className="fa-solid fa-user-doctor text-green-500 w-5"></i> {trans.findDocs}
+            <button onClick={handleFindDoctors} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
+              <i className="fa-solid fa-user-doctor text-green-550 w-5 text-base"></i> {trans.findDocs}
             </button>
-            <button onClick={() => handleAction(onHistoryClick)} className="flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-left">
-              <i className="fa-solid fa-scroll text-green-500 w-5"></i> {trans.myHistory}
+            <button onClick={() => handleAction(onHistoryClick)} className="flex items-center gap-2.5 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-left transition-colors">
+              <i className="fa-solid fa-scroll text-green-550 w-5 text-base"></i> {trans.myHistory}
             </button>
-            <button onClick={() => handleAction(onEmergencyClick)} className="flex items-center gap-2 p-2.5 rounded-xl text-red-500 hover:bg-red-500/10 text-left">
-              <i className="fa-solid fa-truck-medical w-5 animate-pulse"></i> {trans.emergencyDrawer}
+            <button onClick={() => handleAction(onEmergencyClick)} className="flex items-center gap-2.5 p-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 text-left transition-colors">
+              <i className="fa-solid fa-truck-medical w-5 text-base animate-pulse"></i> {trans.emergencyDrawer}
             </button>
           </div>
 
           {currentUser && (
             <div className="border-t border-slate-100 dark:border-slate-800 pt-4 flex flex-col gap-3">
-              <div className="text-[10px] text-slate-400 font-bold uppercase">{trans.profileTitle}</div>
+              <div className="text-[10px] text-slate-400 font-black uppercase tracking-wider">{trans.profileTitle}</div>
               <button 
                 onClick={() => handleNav(currentUser.role === 'admin' ? 'admin-dashboard' : 'doctor-dashboard')} 
-                className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <i className="fa-solid fa-gauge"></i> {trans.dashboard}
               </button>
               <button 
                 onClick={() => handleAction(logout)} 
-                className="w-full py-2.5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all"
               >
                 <i className="fa-solid fa-right-from-bracket"></i> {trans.signOut}
               </button>
