@@ -1,10 +1,10 @@
-const CACHE_NAME = 'dik-doctor-v1';
+const CACHE_NAME = 'dik-doctor-v2';
 const ASSETS = [
   '/',
-  '/index.html',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  '/favicon.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -32,9 +32,33 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request).catch(() => {});
-    })
-  );
+  // Network-first for navigate requests (pages), cache-first for static assets
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then((response) => {
+          if (response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy));
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(e.request);
+        })
+    );
+  } else {
+    e.respondWith(
+      caches.match(e.request).then((cachedResponse) => {
+        if (cachedResponse) return cachedResponse;
+        return fetch(e.request).then((response) => {
+          if (response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy));
+          }
+          return response;
+        }).catch(() => {});
+      })
+    );
+  }
 });
