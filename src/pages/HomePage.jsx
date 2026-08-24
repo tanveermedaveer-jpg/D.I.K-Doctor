@@ -39,7 +39,8 @@ export default function HomePage({
   onViewProfile, 
   onGetToken, 
   openSpecialtiesModal,
-  language 
+  language,
+  onRateDoctor
 }) {
   const [selectedZone, setSelectedZone] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -319,6 +320,7 @@ export default function HomePage({
                     onViewProfile={() => onViewProfile(doc)}
                     onGetToken={() => onGetToken(doc)}
                     language={language}
+                    onRateDoctor={onRateDoctor}
                   />
                 </motion.div>
               ))}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DoctorCard({ doc, onViewProfile, onGetToken, language }) {
+export default function DoctorCard({ doc, onViewProfile, onGetToken, language, onRateDoctor }) {
   const nameInitials = doc.name.split(' ').map(n => n[0]).join('').slice(0, 2);
   const isUrdu = language === 'ur';
 
@@ -18,31 +18,35 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language })
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-805 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow relative text-left">
+    <div className={`relative bg-white dark:bg-slate-900 rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between text-left h-full ${
+      doc.isOnLeave 
+        ? 'border-red-200 dark:border-red-950/60 shadow-sm opacity-90' 
+        : 'border-slate-200 dark:border-slate-800 hover:border-green-500/60 shadow-md hover:shadow-xl'
+    }`}>
       
-      {/* 1. Expand doctor card top banner container height to h-40 */}
-      <div className="w-full h-40 relative overflow-hidden shadow-inner shrink-0">
-        {doc.banner && doc.banner.startsWith('bg-') ? (
-          <div className={`w-full h-full ${doc.banner}`}></div>
+      {/* 1. Header Banner */}
+      <div 
+        className={`h-24 relative flex items-start justify-between p-3 ${
+          doc.banner && doc.banner.startsWith('bg-') ? doc.banner : 'bg-cover bg-center'
+        }`}
+        style={doc.banner && doc.banner.startsWith('bg-') ? {} : { backgroundImage: `url('${doc.banner || ''}')` }}
+      >
+        <div className="absolute inset-0 bg-black/20"></div>
+
+        {/* Status Badge */}
+        {doc.isOnLeave ? (
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold z-10 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+            {trans.onLeave}
+          </span>
         ) : (
-          <img src={doc.banner || ''} alt="Clinic Banner" className="w-full h-full object-cover" />
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400 text-[10px] font-bold z-10">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            {trans.available}
+          </span>
         )}
-        <div className="absolute inset-0 bg-black/15"></div>
       </div>
       
-      {/* Status Badge */}
-      {doc.isOnLeave ? (
-        <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400 text-[10px] font-bold z-10">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-          {trans.onLeave}
-        </span>
-      ) : (
-        <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400 text-[10px] font-bold z-10">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-          {trans.available}
-        </span>
-      )}
-
       {/* 2. Place profile avatar overlapping the banner's bottom edge */}
       <div className="px-5 -mt-8 relative z-10 flex items-end justify-between">
         <div className="w-16 h-16 rounded-full border-4 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-lg font-bold shadow-md overflow-hidden shrink-0">
@@ -55,10 +59,25 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language })
           )}
         </div>
 
-        {/* 5-Star Rating Badge */}
-        <div className="flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-400/40 text-amber-500 dark:text-amber-400 text-[11px] font-extrabold shadow-sm shrink-0">
-          <i className="fa-solid fa-star text-amber-400"></i>
-          <span>{doc.rating ? (typeof doc.rating === 'number' ? doc.rating.toFixed(1) : doc.rating) : '5.0'}</span>
+        {/* Interactive 5-Star Rating Badge */}
+        <div className="flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 px-2 py-1 rounded-full border border-amber-400/40 text-amber-500 dark:text-amber-400 text-[11px] font-extrabold shadow-sm shrink-0">
+          <div className="flex items-center gap-0.5" title="Click stars to rate doctor">
+            {[1, 2, 3, 4, 5].map(star => (
+              <button
+                key={star}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onRateDoctor) onRateDoctor(doc.id, star);
+                }}
+                className="hover:scale-125 transition-transform p-0.5 text-amber-400 focus:outline-none"
+                title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+              >
+                <i className={`fa-solid fa-star ${star <= Math.round(doc.rating || 5) ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600'}`}></i>
+              </button>
+            ))}
+          </div>
+          <span className="ml-1 text-[11px] font-black">{doc.rating ? (typeof doc.rating === 'number' ? doc.rating.toFixed(1) : doc.rating) : '5.0'}</span>
         </div>
       </div>
 

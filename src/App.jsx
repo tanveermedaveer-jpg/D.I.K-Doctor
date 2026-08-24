@@ -568,6 +568,26 @@ export default function App() {
     }
   };
 
+  const handleRateDoctor = (docId, ratingVal) => {
+    const docIndex = doctors.findIndex(d => d.id === docId);
+    if (docIndex === -1) return;
+    const doc = doctors[docIndex];
+    const currentRating = typeof doc.rating === 'number' ? doc.rating : 5.0;
+    const count = doc.ratingCount || 1;
+    const updatedAvg = parseFloat(((currentRating * count + ratingVal) / (count + 1)).toFixed(1));
+    
+    const updatedDocs = [...doctors];
+    updatedDocs[docIndex] = {
+      ...doc,
+      rating: updatedAvg,
+      ratingCount: count + 1
+    };
+    setDoctors(updatedDocs);
+    saveDoctors(updatedDocs);
+    addActivityLog(`User rated ${doc.name}: ${ratingVal} stars (New Avg: ${updatedAvg})`);
+    triggerToast(`Thank you! Rated ${doc.name} ${ratingVal} ⭐`, "fa-star text-amber-400");
+  };
+
   const handleDeleteComplaint = (compId) => {
     if (confirm("Delete this query?")) {
       const updated = complaints.filter(c => c.id !== compId);
@@ -639,6 +659,7 @@ export default function App() {
             onGetToken={handleOpenGetToken}
             openSpecialtiesModal={handleOpenSpecialtiesModal}
             language={language}
+            onRateDoctor={handleRateDoctor}
           />
         )}
 
@@ -744,9 +765,6 @@ export default function App() {
                     <div className="min-w-0 flex-1">
                       <span className="block text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-green-600 dark:group-hover:text-green-400">
                         {language === 'ur' ? spec.ur : spec.name}
-                      </span>
-                      <span className="block text-[10px] text-slate-400 font-medium truncate">
-                        {language === 'ur' ? spec.name : spec.ur}
                       </span>
                     </div>
                   </button>
@@ -1062,7 +1080,9 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-x-hidden">
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden text-left">
             <div className="bg-slate-50 dark:bg-slate-950 p-4 border-b border-slate-100 dark:border-slate-850 flex justify-between items-center">
-              <h2 className="text-xs font-extrabold text-slate-500 dark:text-slate-450 uppercase">Privacy Policy & Data Safety</h2>
+              <h2 className="text-xs font-extrabold text-slate-500 dark:text-slate-450 uppercase">
+                {language === 'ur' ? 'پرائیویسی پالیسی اور ڈیٹا کی حفاظت' : 'Privacy Policy & Data Safety'}
+              </h2>
               <button 
                 onClick={() => setIsPrivacyOpen(false)} 
                 className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all"
@@ -1072,16 +1092,37 @@ export default function App() {
             </div>
             <div className="p-6 space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-shield-halved text-green-500"></i> Sandboxed Data Security</h3>
-                <p>All logs, registered patient names, queue timelines, and doctor configurations are saved strictly within your browser's private sandbox storage (`localStorage`). No information is processed, shared, or compiled on external cloud databases.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-shield-halved text-green-500"></i>
+                  <span>{language === 'ur' ? 'محفوظ مقامی ڈیٹا سیکیورٹی' : 'Sandboxed Data Security'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'تمام لاگز، رجسٹرڈ مریضوں کے نام، قطار کے اوقات، اور ڈاکٹروں کی ترتیب آپ کے براؤزر کے محفوظ لوکل اسٹوریج میں محفوظ رہتی ہے۔ کوئی بھی معلومات بیرونی ڈیٹا بیس پر شیئر یا اپ لوڈ نہیں کی جاتی۔' 
+                    : "All logs, registered patient names, queue timelines, and doctor configurations are saved strictly within your browser's private sandbox storage (`localStorage`). No information is processed, shared, or compiled on external cloud databases."}
+                </p>
               </div>
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-user-lock text-green-500"></i> Non-Sharing Policy</h3>
-                <p>We respect the confidentiality of mobile numbers supplied during token bookings. These parameters are used solely to generate daily slips and log dashboard audit trails. They are never sold or shared.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-user-lock text-green-500"></i>
+                  <span>{language === 'ur' ? 'ڈیٹا عدم افشاء کی پالیسی' : 'Non-Sharing Policy'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'ہم ٹوکن کی بکنگ کے دوران فراہم کیے گئے موبائل نمبروں کی راز داری کا مکمل احترام کرتے ہیں۔ یہ معلومات صرف روزانہ سلپ بنانے اور ڈیش بورڈ کے لاگز کے لیے استعمال ہوتی ہیں۔ انہیں کبھی فروخت یا شیئر نہیں کیا جاتا۔' 
+                    : 'We respect the confidentiality of mobile numbers supplied during token bookings. These parameters are used solely to generate daily slips and log dashboard audit trails. They are never sold or shared.'}
+                </p>
               </div>
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-circle-check text-green-500"></i> Play Store Policy Compliance</h3>
-                <p>D.I.K Doctor adheres fully to mobile platform security guidelines. There are no background telemetry collections, device location sweeps, or unauthorized cookie storage methods.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-circle-check text-green-500"></i>
+                  <span>{language === 'ur' ? 'سیکیورٹی اور پلے اسٹور پالیسی تعمیل' : 'Play Store Policy Compliance'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'ڈی آئی کے ڈاکٹر مکمل طور پر تمام تکنیکی اور سیکیورٹی کی ہدایات پر عمل پیرا ہے۔ اس میں کوئی پوشیدہ بیک گراؤنڈ ٹریکنگ یا بلا اجازت کوکیز کا استعمال نہیں ہے۔' 
+                    : 'D.I.K Doctor adheres fully to mobile platform security guidelines. There are no background telemetry collections, device location sweeps, or unauthorized cookie storage methods.'}
+                </p>
               </div>
             </div>
             <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-850 text-right">
@@ -1089,7 +1130,7 @@ export default function App() {
                 onClick={() => setIsPrivacyOpen(false)} 
                 className="px-4 py-2 bg-green-500 text-white font-bold text-xs rounded-xl hover:bg-green-600 transition-colors shadow"
               >
-                Understood
+                {language === 'ur' ? 'سمجھ گیا / ٹھیک ہے' : 'Understood'}
               </button>
             </div>
           </div>
@@ -1101,7 +1142,9 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-x-hidden">
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl w-[95%] max-w-md mx-auto overflow-hidden text-left">
             <div className="bg-slate-50 dark:bg-slate-950 p-4 border-b border-slate-100 dark:border-slate-850 flex justify-between items-center">
-              <h2 className="text-xs font-extrabold text-slate-500 dark:text-slate-450 uppercase">Terms of Service & Guidelines</h2>
+              <h2 className="text-xs font-extrabold text-slate-500 dark:text-slate-450 uppercase">
+                {language === 'ur' ? 'سروس کی شرائط اور ہدایات' : 'Terms of Service & Guidelines'}
+              </h2>
               <button 
                 onClick={() => setIsTermsOpen(false)} 
                 className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition-all"
@@ -1111,16 +1154,37 @@ export default function App() {
             </div>
             <div className="p-6 space-y-4 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-hourglass-half text-teal-500"></i> Daily Token Queue Expiry</h3>
-                <p>All appointment queue numbers and serving lists are auto-incremented and valid solely for the date of generation. Timelines purge automatically at the end of clinic hours.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-hourglass-half text-teal-500"></i>
+                  <span>{language === 'ur' ? 'روزانہ ٹوکن کی میعاد' : 'Daily Token Queue Expiry'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'تمام اپائنٹمنٹ قطار کے نمبر صرف تاریخِ اجرا کے لیے کارآمد ہیں۔ کلینک کے اوقات ختم ہونے پر تمام قطاریں خود بخود ختم ہو جاتی ہیں۔' 
+                    : 'All appointment queue numbers and serving lists are auto-incremented and valid solely for the date of generation. Timelines purge automatically at the end of clinic hours.'}
+                </p>
               </div>
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-clock text-teal-500"></i> Punctuality Guidelines</h3>
-                <p>Patients are requested to regularly check the Live Serving state on the home page tracker. Please plan your arrival at the clinic site at least 15 minutes before your estimated queue turn.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-clock text-teal-500"></i>
+                  <span>{language === 'ur' ? 'وقت کی پابندی کی ہدایات' : 'Punctuality Guidelines'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'مریضوں سے گزارش ہے کہ وہ ہوم پیج ٹریکر پر لائیو سرونگ سٹیٹس چیک کرتے رہیں۔ برائے مہربانی اپنی باری سے کم از کم 15 منٹ پہلے کلینک پہنچیں۔' 
+                    : 'Patients are requested to regularly check the Live Serving state on the home page tracker. Please plan your arrival at the clinic site at least 15 minutes before your estimated queue turn.'}
+                </p>
               </div>
               <div className="space-y-1.5">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i className="fa-solid fa-hand-holding-hand text-teal-500"></i> Serve Adjustments</h3>
-                <p>Queuing sequences, schedule shifts, and leave announcements are configured at the discretion of the registered medical specialists or super administrators.</p>
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                  <i className="fa-solid fa-hand-holding-hand text-teal-500"></i>
+                  <span>{language === 'ur' ? 'خدمات اور ترتیب میں تبدیلی' : 'Serve Adjustments'}</span>
+                </h3>
+                <p>
+                  {language === 'ur' 
+                    ? 'قطار کی ترتیب، اوقات کار میں تبدیلی، اور چھٹیوں کا اعلان رجسٹرڈ ڈاکٹرز یا سپریم ایڈمن کی صوابدید پر منحصر ہے۔' 
+                    : 'Queuing sequences, schedule shifts, and leave announcements are configured at the discretion of the registered medical specialists or super administrators.'}
+                </p>
               </div>
             </div>
             <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-850 text-right">
@@ -1128,7 +1192,7 @@ export default function App() {
                 onClick={() => setIsTermsOpen(false)} 
                 className="px-4 py-2 bg-green-500 text-white font-bold text-xs rounded-xl hover:bg-green-600 transition-colors shadow"
               >
-                I Agree
+                {language === 'ur' ? 'مجھے منظور ہے' : 'I Agree'}
               </button>
             </div>
           </div>

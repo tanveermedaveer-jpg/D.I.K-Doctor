@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getAdminCreds, saveAdminCreds } from '../services/storage';
+import { 
+  getAdminCreds, 
+  saveAdminCreds, 
+  getCustomCities, 
+  saveCustomCities, 
+  getCustomZones, 
+  saveCustomZones 
+} from '../services/storage';
 
 export default function AdminDashboard({ 
   doctors, 
@@ -23,7 +30,15 @@ export default function AdminDashboard({
   const [adminName, setAdminName] = useState(adminCreds.name || 'Super Admin');
   const [adminPhone, setAdminPhone] = useState(adminCreds.phone || '03103716116');
   const [adminPassword, setAdminPassword] = useState(adminCreds.password || 'Sadaf@9099');
-  
+  const [showAdminPass, setShowAdminPass] = useState(false);
+
+  // Custom Cities & Zones interactive management state
+  const [customCities, setCustomCities] = useState(() => getCustomCities());
+  const [customZones, setCustomZones] = useState(() => getCustomZones());
+  const [newCityName, setNewCityName] = useState('');
+  const [newZoneName, setNewZoneName] = useState('');
+  const [newZoneCity, setNewZoneCity] = useState('D.I.K');
+
   // Registration Form state
   const [editId, setEditId] = useState('');
   const [name, setName] = useState('');
@@ -48,7 +63,43 @@ export default function AdminDashboard({
 
   useEffect(() => {
     setAdminCreds(getAdminCreds());
+    setCustomCities(getCustomCities());
+    setCustomZones(getCustomZones());
   }, []);
+
+  const handleAddCity = (e) => {
+    e.preventDefault();
+    if (!newCityName.trim()) return;
+    const trimmed = newCityName.trim();
+    if (customCities.includes(trimmed)) return;
+    const updated = [...customCities, trimmed];
+    setCustomCities(updated);
+    saveCustomCities(updated);
+    setNewCityName('');
+  };
+
+  const handleDeleteCity = (cityName) => {
+    const updated = customCities.filter(c => c !== cityName);
+    setCustomCities(updated);
+    saveCustomCities(updated);
+  };
+
+  const handleAddZone = (e) => {
+    e.preventDefault();
+    if (!newZoneName.trim() || !newZoneCity) return;
+    const trimmed = newZoneName.trim();
+    if (customZones.some(z => z.name === trimmed && z.city === newZoneCity)) return;
+    const updated = [...customZones, { name: trimmed, city: newZoneCity }];
+    setCustomZones(updated);
+    saveCustomZones(updated);
+    setNewZoneName('');
+  };
+
+  const handleDeleteZone = (zoneObj) => {
+    const updated = customZones.filter(z => !(z.name === zoneObj.name && z.city === zoneObj.city));
+    setCustomZones(updated);
+    saveCustomZones(updated);
+  };
 
   const handleAdminProfileSubmit = (e) => {
     e.preventDefault();
@@ -115,11 +166,13 @@ export default function AdminDashboard({
   ]));
 
   const uniqueCities = Array.from(new Set([
+    ...customCities,
     "D.I.K", "Tank", "Lakki Marwat", "Peshawar",
     ...doctors.filter(d => d && d.city).map(d => d.city)
   ]));
 
   const uniqueZones = Array.from(new Set([
+    ...customZones.map(z => typeof z === 'string' ? z : z.name),
     "Cantt", "Muryali", "Circular Road", "Topanwala", "Town Hall", "Main Bazar",
     ...doctors.filter(d => d && d.zone).map(d => d.zone)
   ]));
@@ -737,13 +790,22 @@ export default function AdminDashboard({
                   <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
                     {isUrdu ? 'لاگ ان پاس ورڈ' : 'Account Password'}
                   </label>
-                  <input 
-                    type="password" 
-                    value={adminPassword} 
-                    onChange={(e) => setAdminPassword(e.target.value)} 
-                    required 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-mono"
-                  />
+                  <div className="relative">
+                    <input 
+                      type={showAdminPass ? 'text' : 'password'} 
+                      value={adminPassword} 
+                      onChange={(e) => setAdminPassword(e.target.value)} 
+                      required 
+                      className="w-full pl-3 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-mono"
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowAdminPass(!showAdminPass)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    >
+                      <i className={`fa-solid ${showAdminPass ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                    </button>
+                  </div>
                 </div>
               </div>
               <button 
@@ -754,23 +816,103 @@ export default function AdminDashboard({
               </button>
             </form>
 
-            {/* Multi-City & Zone Expansion Overview */}
-            <div className="p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-3">
-              <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                {isUrdu ? 'فعال شہر اور میڈیکل زونز' : 'Active Cities & Healthcare Zones'}
-              </h3>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {uniqueCities.map(c => (
-                  <span key={c} className="px-3 py-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30 text-xs font-bold flex items-center gap-1.5">
-                    <i className="fa-solid fa-city"></i> {c}
-                  </span>
-                ))}
-                {uniqueZones.map(z => (
-                  <span key={z} className="px-3 py-1.5 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30 text-xs font-bold flex items-center gap-1.5">
-                    <i className="fa-solid fa-location-dot"></i> {z}
-                  </span>
-                ))}
+            {/* Fully Interactive Multi-City & Zone Manager Console */}
+            <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-6">
+              <div>
+                <h3 className="text-xs font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-1.5">
+                  <i className="fa-solid fa-city text-teal-500"></i>
+                  <span>{isUrdu ? 'فعال شہر منیجر (شہر شامل کریں/حذف کریں)' : 'Active Cities Manager'}</span>
+                </h3>
+
+                {/* Form: Add New City */}
+                <form onSubmit={handleAddCity} className="mt-3 flex gap-2">
+                  <input
+                    type="text"
+                    value={newCityName}
+                    onChange={(e) => setNewCityName(e.target.value)}
+                    placeholder={isUrdu ? 'نیا شہر (مثلاً ٹانک)' : 'Add new city (e.g. Tank)'}
+                    className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold rounded-xl shadow transition-all flex items-center gap-1 shrink-0"
+                  >
+                    <i className="fa-solid fa-plus"></i> {isUrdu ? 'شہر شامل کریں' : 'Add City'}
+                  </button>
+                </form>
+
+                {/* Cities Pill Badges List */}
+                <div className="flex flex-wrap gap-2 pt-3">
+                  {customCities.map(c => (
+                    <span key={c} className="px-3 py-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/30 text-xs font-bold flex items-center gap-2 group shadow-sm">
+                      <span><i className="fa-solid fa-city mr-1 text-teal-500"></i>{c}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCity(c)}
+                        className="text-red-400 hover:text-red-600 transition-colors ml-1 focus:outline-none"
+                        title={`Delete ${c}`}
+                      >
+                        <i className="fa-solid fa-xmark text-xs"></i>
+                      </button>
+                    </span>
+                  ))}
+                </div>
               </div>
+
+              <div className="border-t border-slate-200 dark:border-slate-800 pt-5">
+                <h3 className="text-xs font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider flex items-center gap-1.5">
+                  <i className="fa-solid fa-location-dot text-green-500"></i>
+                  <span>{isUrdu ? 'میڈیکل زونز منیجر (زون شامل کریں/حذف کریں)' : 'Healthcare Zones Manager'}</span>
+                </h3>
+
+                {/* Form: Add New Zone under a City */}
+                <form onSubmit={handleAddZone} className="mt-3 grid sm:grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    value={newZoneName}
+                    onChange={(e) => setNewZoneName(e.target.value)}
+                    placeholder={isUrdu ? 'نیا زون (مثلاً قریشی موڑ)' : 'New zone (e.g. Qureshi Mor)'}
+                    className="sm:col-span-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                  />
+                  <select
+                    value={newZoneCity}
+                    onChange={(e) => setNewZoneCity(e.target.value)}
+                    className="sm:col-span-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-green-500 font-medium"
+                  >
+                    {customCities.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="submit"
+                    className="sm:col-span-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-xl shadow transition-all flex items-center justify-center gap-1 shrink-0"
+                  >
+                    <i className="fa-solid fa-plus"></i> {isUrdu ? 'زون شامل کریں' : 'Add Zone'}
+                  </button>
+                </form>
+
+                {/* Zones Pill Badges List */}
+                <div className="flex flex-wrap gap-2 pt-3">
+                  {customZones.map(z => {
+                    const zName = typeof z === 'string' ? z : z.name;
+                    const zCity = typeof z === 'string' ? 'D.I.K' : z.city;
+                    return (
+                      <span key={`${zName}-${zCity}`} className="px-3 py-1.5 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-700 dark:text-green-300 border border-green-500/30 text-xs font-bold flex items-center gap-2 group shadow-sm">
+                        <span><i className="fa-solid fa-location-dot mr-1 text-green-500"></i>{zCity} - {zName}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteZone(z)}
+                          className="text-red-400 hover:text-red-600 transition-colors ml-1 focus:outline-none"
+                          title={`Delete ${zName}`}
+                        >
+                          <i className="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
 
           </div>

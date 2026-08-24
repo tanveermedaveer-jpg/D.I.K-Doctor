@@ -69,6 +69,60 @@ const INITIAL_DOCTORS = [
   }
 ];
 
+export const getCustomCities = () => {
+  try {
+    const stored = localStorage.getItem('dik_custom_cities');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.error("Failed to parse custom cities from localStorage", e);
+  }
+  const defaultCities = ["D.I.K", "Tank", "Lakki Marwat", "Peshawar"];
+  localStorage.setItem('dik_custom_cities', JSON.stringify(defaultCities));
+  return defaultCities;
+};
+
+export const saveCustomCities = (cities) => {
+  try {
+    localStorage.setItem('dik_custom_cities', JSON.stringify(cities));
+  } catch (e) {
+    console.error("Failed to save custom cities to localStorage", e);
+  }
+};
+
+export const getCustomZones = () => {
+  try {
+    const stored = localStorage.getItem('dik_custom_zones');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.error("Failed to parse custom zones from localStorage", e);
+  }
+  const defaultZones = [
+    { name: "Cantt", city: "D.I.K" },
+    { name: "Muryali", city: "D.I.K" },
+    { name: "Circular Road", city: "D.I.K" },
+    { name: "Topanwala", city: "D.I.K" },
+    { name: "Town Hall", city: "D.I.K" },
+    { name: "Main Bazar", city: "D.I.K" },
+    { name: "Main City", city: "Tank" }
+  ];
+  localStorage.setItem('dik_custom_zones', JSON.stringify(defaultZones));
+  return defaultZones;
+};
+
+export const saveCustomZones = (zones) => {
+  try {
+    localStorage.setItem('dik_custom_zones', JSON.stringify(zones));
+  } catch (e) {
+    console.error("Failed to save custom zones to localStorage", e);
+  }
+};
+
 export const getAdminCreds = () => {
   try {
     const stored = localStorage.getItem('dik_admin_creds');

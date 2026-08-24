@@ -86,6 +86,7 @@ export default function DoctorDashboard({
   const [specialty, setSpecialty] = useState(doc.specialty || '');
   const [docPhone, setDocPhone] = useState(doc.phone || '');
   const [docPin, setDocPin] = useState(doc.pin || '');
+  const [showDocPin, setShowDocPin] = useState(false);
   const [tempBanner, setTempBanner] = useState(doc.banner || '');
   const [tempAvatar, setTempAvatar] = useState(doc.avatar || '');
   const [bannerUrl, setBannerUrl] = useState(doc.banner && (doc.banner.startsWith('data:') || doc.banner.startsWith('bg-')) ? '' : doc.banner || '');
@@ -706,16 +707,25 @@ export default function DoctorDashboard({
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{language === 'ur' ? '۴ ہندسوں کا پن کوڈ' : '4-Digit Login PIN'}</label>
-                  <input 
-                    type="text" 
-                    value={docPin} 
-                    onChange={(e) => setDocPin(e.target.value)} 
-                    required 
-                    maxLength={4}
-                    pattern="[0-9]{4}"
-                    placeholder="PIN Code" 
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
-                  />
+                  <div className="relative">
+                    <input 
+                      type={showDocPin ? 'text' : 'password'} 
+                      value={docPin} 
+                      onChange={(e) => setDocPin(e.target.value)} 
+                      required 
+                      maxLength={4}
+                      pattern="[0-9]{4}"
+                      placeholder="PIN Code" 
+                      className="w-full pl-3 pr-10 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 outline-none font-mono"
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowDocPin(!showDocPin)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    >
+                      <i className={`fa-solid ${showDocPin ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
