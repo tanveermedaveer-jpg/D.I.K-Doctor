@@ -42,7 +42,7 @@ export default function Footer({
               <div className="w-8 h-8 rounded-lg bg-green-500/20 text-green-405 flex items-center justify-center text-base">
                 <i className="fa-solid fa-house-medical"></i>
               </div>
-              <span className="font-extrabold text-base text-white tracking-tight">D.I.K Doctor</span>
+              <span className="font-extrabold text-base text-white tracking-tight">{isUrdu ? 'ڈی آئی کے ڈاکٹر' : 'D.I.K Doctor'}</span>
             </div>
             <p className="text-xs text-slate-500 font-medium leading-relaxed">{trans.tagline}</p>
             <p className="text-[10px] text-slate-600 font-medium pt-1">{trans.copyright}</p>

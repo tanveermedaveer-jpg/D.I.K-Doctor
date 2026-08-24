@@ -14,7 +14,8 @@ const INITIAL_DOCTORS = [
     queue: [],
     city: "D.I.K",
     zone: "Cantt",
-    rating: 5.0
+    rating: 0,
+    ratingCount: 0
   },
   {
     id: "doc-2",
@@ -31,7 +32,8 @@ const INITIAL_DOCTORS = [
     queue: [],
     city: "D.I.K",
     zone: "Muryali",
-    rating: 4.9
+    rating: 0,
+    ratingCount: 0
   },
   {
     id: "doc-3",
@@ -48,7 +50,8 @@ const INITIAL_DOCTORS = [
     queue: [],
     city: "D.I.K",
     zone: "Circular Road",
-    rating: 4.8
+    rating: 0,
+    ratingCount: 0
   },
   {
     id: "doc-4",
@@ -65,7 +68,8 @@ const INITIAL_DOCTORS = [
     queue: [],
     city: "D.I.K",
     zone: "Topanwala",
-    rating: 4.9
+    rating: 0,
+    ratingCount: 0
   }
 ];
 

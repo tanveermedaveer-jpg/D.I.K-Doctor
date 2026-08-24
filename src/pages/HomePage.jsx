@@ -80,10 +80,10 @@ export default function HomePage({
     return matchesSearch && matchesSpecialty && matchesCity && matchesZone && matchesLady;
   });
 
-  // Sort doctors by 5-Star rating descending (highest rating first)
+  // Sort doctors by rating descending (highest rated first, unrated below)
   const sortedDocs = [...filteredDocs].sort((a, b) => {
-    const rA = typeof a.rating === 'number' ? a.rating : 5.0;
-    const rB = typeof b.rating === 'number' ? b.rating : 5.0;
+    const rA = typeof a.rating === 'number' ? a.rating : 0;
+    const rB = typeof b.rating === 'number' ? b.rating : 0;
     return rB - rA;
   });
 

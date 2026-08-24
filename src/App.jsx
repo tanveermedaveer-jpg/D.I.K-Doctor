@@ -572,9 +572,13 @@ export default function App() {
     const docIndex = doctors.findIndex(d => d.id === docId);
     if (docIndex === -1) return;
     const doc = doctors[docIndex];
-    const currentRating = typeof doc.rating === 'number' ? doc.rating : 5.0;
-    const count = doc.ratingCount || 1;
-    const updatedAvg = parseFloat(((currentRating * count + ratingVal) / (count + 1)).toFixed(1));
+    const currentRating = typeof doc.rating === 'number' ? doc.rating : 0;
+    const count = doc.ratingCount || 0;
+    
+    let updatedAvg = ratingVal;
+    if (count > 0 && currentRating > 0) {
+      updatedAvg = parseFloat(((currentRating * count + ratingVal) / (count + 1)).toFixed(1));
+    }
     
     const updatedDocs = [...doctors];
     updatedDocs[docIndex] = {

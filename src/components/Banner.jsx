@@ -44,7 +44,7 @@ export default function Banner({ activeTokens, activeDoctors, language }) {
         </span>
         
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-none text-white drop-shadow-md">
-          D.I.K Doctor <br className="sm:hidden" />
+          {isUrdu ? 'ڈی آئی کے ڈاکٹر' : 'D.I.K Doctor'} <br className="sm:hidden" />
           <span className="bg-gradient-to-r from-green-300 to-teal-300 bg-clip-text text-transparent">{trans.hubTitle}</span>
         </h1>
         

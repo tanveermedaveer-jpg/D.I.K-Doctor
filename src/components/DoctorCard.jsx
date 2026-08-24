@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function DoctorCard({ doc, onViewProfile, onGetToken, language, onRateDoctor }) {
+  const [hoverStar, setHoverStar] = useState(0);
   const nameInitials = doc.name.split(' ').map(n => n[0]).join('').slice(0, 2);
   const isUrdu = language === 'ur';
 
@@ -59,25 +60,36 @@ export default function DoctorCard({ doc, onViewProfile, onGetToken, language, o
           )}
         </div>
 
-        {/* Interactive 5-Star Rating Badge */}
-        <div className="flex items-center gap-1 bg-amber-500/10 dark:bg-amber-500/20 px-2 py-1 rounded-full border border-amber-400/40 text-amber-500 dark:text-amber-400 text-[11px] font-extrabold shadow-sm shrink-0">
-          <div className="flex items-center gap-0.5" title="Click stars to rate doctor">
-            {[1, 2, 3, 4, 5].map(star => (
-              <button
-                key={star}
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onRateDoctor) onRateDoctor(doc.id, star);
-                }}
-                className="hover:scale-125 transition-transform p-0.5 text-amber-400 focus:outline-none"
-                title={`Rate ${star} star${star > 1 ? 's' : ''}`}
-              >
-                <i className={`fa-solid fa-star ${star <= Math.round(doc.rating || 5) ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600'}`}></i>
-              </button>
-            ))}
+        {/* Empty-by-default Interactive 5-Star Rating Badge */}
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-extrabold shadow-sm shrink-0">
+          <div 
+            className="flex items-center gap-0.5" 
+            onMouseLeave={() => setHoverStar(0)}
+            title="Click stars to rate doctor"
+          >
+            {[1, 2, 3, 4, 5].map(star => {
+              const activeRating = hoverStar > 0 ? hoverStar : (doc.rating || 0);
+              const isFilled = star <= Math.round(activeRating);
+              return (
+                <button
+                  key={star}
+                  type="button"
+                  onMouseEnter={() => setHoverStar(star)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onRateDoctor) onRateDoctor(doc.id, star);
+                  }}
+                  className="hover:scale-125 transition-transform p-0.5 focus:outline-none"
+                  title={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                >
+                  <i className={`fa-solid fa-star ${isFilled ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600'}`}></i>
+                </button>
+              );
+            })}
           </div>
-          <span className="ml-1 text-[11px] font-black">{doc.rating ? (typeof doc.rating === 'number' ? doc.rating.toFixed(1) : doc.rating) : '5.0'}</span>
+          <span className={`ml-1 text-[11px] font-black ${doc.rating > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-slate-400'}`}>
+            {doc.rating && doc.rating > 0 ? (typeof doc.rating === 'number' ? doc.rating.toFixed(1) : doc.rating) : '0.0'}
+          </span>
         </div>
       </div>
 

@@ -59,10 +59,10 @@ export default function Header({
           </div>
           <div>
             <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-400 dark:to-teal-400 bg-clip-text text-transparent block">
-              D.I.K Doctor
+              {isUrdu ? 'ڈی آئی کے ڈاکٹر' : 'D.I.K Doctor'}
             </span>
             <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-semibold tracking-wider uppercase -mt-1">
-              ڈی آئی کے ڈاکٹر
+              {isUrdu ? 'آن لائن ہیلتھ سروسز' : 'Healthcare Management Portal'}
             </span>
           </div>
         </button>
@@ -82,18 +82,6 @@ export default function Header({
 
         {/* Header Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Language Toggle Button */}
-          {onLanguageChange && (
-            <button
-              onClick={() => onLanguageChange(language === 'ur' ? 'en' : 'ur')}
-              className="px-2.5 py-1.5 rounded-xl bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30 text-xs font-black transition-all hover:bg-green-500 hover:text-white flex items-center gap-1 shrink-0"
-              title="Toggle Language"
-            >
-              <span>🌐</span>
-              <span>{language === 'ur' ? 'ENG' : 'اردو'}</span>
-            </button>
-          )}
-
           {/* Light/Dark Mode Switch */}
           <button 
             onClick={toggleDarkMode} 
