@@ -180,81 +180,88 @@ export default function Footer({
 
         {/* Dynamic More Submenu Overlay above More Tab */}
         {showMoreMenu && (
-          <div className="absolute bottom-18 right-4 left-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4.5 z-50 flex flex-col gap-3 text-xs font-bold text-slate-700 dark:text-slate-200 text-left">
-            <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
-              <span className="text-[10px] uppercase text-slate-400 font-extrabold tracking-wider">{isUrdu ? 'مزید معلومات' : 'More Options'}</span>
-              <div className="flex items-center gap-2.5">
-                {/* Discreet Staff Login Lock Button */}
-                <button 
-                  type="button" 
-                  onClick={() => { onLoginClick(); setShowMoreMenu(false); }}
-                  className="text-slate-400 hover:text-green-500 dark:hover:text-green-450 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-sm"
-                  title="Staff Login Portal"
-                >
-                  <i className="fa-solid fa-lock"></i>
-                </button>
-                <button type="button" onClick={() => setShowMoreMenu(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                  <i className="fa-solid fa-xmark"></i>
-                </button>
+          <>
+            {/* Backdrop click handler to dismiss menu on clicking outside */}
+            <div 
+              className="fixed inset-0 z-40 bg-black/10 dark:bg-black/40 backdrop-blur-xs" 
+              onClick={() => setShowMoreMenu(false)}
+            />
+            <div className="absolute bottom-18 right-4 left-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-4.5 z-50 flex flex-col gap-3 text-xs font-bold text-slate-700 dark:text-slate-200 text-left">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-[10px] uppercase text-slate-400 font-extrabold tracking-wider">{isUrdu ? 'مزید معلومات' : 'More Options'}</span>
+                <div className="flex items-center gap-2.5">
+                  {/* Discreet Staff Login Lock Button */}
+                  <button 
+                    type="button" 
+                    onClick={() => { onLoginClick(); setShowMoreMenu(false); }}
+                    className="text-slate-400 hover:text-green-500 dark:hover:text-green-450 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-sm"
+                    title="Staff Login Portal"
+                  >
+                    <i className="fa-solid fa-lock"></i>
+                  </button>
+                  <button type="button" onClick={() => setShowMoreMenu(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <button 
+                type="button"
+                onClick={() => { onContactClick(); setShowMoreMenu(false); }} 
+                className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
+              >
+                <i className="fa-solid fa-envelope text-slate-400 text-sm"></i>
+                <span>{trans.contactUs}</span>
+              </button>
+              
+              <button 
+                type="button"
+                onClick={() => { onPrivacyClick(); setShowMoreMenu(false); }} 
+                className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
+              >
+                <i className="fa-solid fa-shield-halved text-slate-400 text-sm"></i>
+                <span>{trans.privacyPolicy}</span>
+              </button>
+              
+              <button 
+                type="button"
+                onClick={() => { onTermsClick(); setShowMoreMenu(false); }} 
+                className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
+              >
+                <i className="fa-solid fa-file-contract text-slate-400 text-sm"></i>
+                <span>{trans.termsOfService}</span>
+              </button>
+              
+              {/* Quick Language Switcher inside More drawer */}
+              <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 mt-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{isUrdu ? 'زبان منتخب کریں' : 'App Language'}</span>
+                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <button 
+                    type="button"
+                    onClick={() => { onLanguageChange('en'); setShowMoreMenu(false); }} 
+                    className={`px-2.5 py-1 text-[9px] rounded font-bold transition-all ${
+                      language === 'en' 
+                        ? 'bg-green-500 text-white shadow-sm' 
+                        : 'text-slate-500 dark:text-slate-450'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => { onLanguageChange('ur'); setShowMoreMenu(false); }} 
+                    className={`px-2.5 py-1 text-[9px] rounded font-bold transition-all ${
+                      language === 'ur' 
+                        ? 'bg-green-500 text-white shadow-sm' 
+                        : 'text-slate-500 dark:text-slate-455'
+                    }`}
+                  >
+                    اردو
+                  </button>
+                </div>
               </div>
             </div>
-            
-            <button 
-              type="button"
-              onClick={() => { onContactClick(); setShowMoreMenu(false); }} 
-              className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
-            >
-              <i className="fa-solid fa-envelope text-slate-400 text-sm"></i>
-              <span>{trans.contactUs}</span>
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => { onPrivacyClick(); setShowMoreMenu(false); }} 
-              className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
-            >
-              <i className="fa-solid fa-shield-halved text-slate-400 text-sm"></i>
-              <span>{trans.privacyPolicy}</span>
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => { onTermsClick(); setShowMoreMenu(false); }} 
-              className="flex items-center gap-3 py-2 px-1 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl hover:text-green-550 dark:hover:text-green-400 transition-colors text-left"
-            >
-              <i className="fa-solid fa-file-contract text-slate-400 text-sm"></i>
-              <span>{trans.termsOfService}</span>
-            </button>
-            
-            {/* Quick Language Switcher inside More drawer */}
-            <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 mt-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{isUrdu ? 'زبان منتخب کریں' : 'App Language'}</span>
-              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                <button 
-                  type="button"
-                  onClick={() => { onLanguageChange('en'); setShowMoreMenu(false); }} 
-                  className={`px-2.5 py-1 text-[9px] rounded font-bold transition-all ${
-                    language === 'en' 
-                      ? 'bg-green-500 text-white shadow-sm' 
-                      : 'text-slate-500 dark:text-slate-450'
-                  }`}
-                >
-                  EN
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => { onLanguageChange('ur'); setShowMoreMenu(false); }} 
-                  className={`px-2.5 py-1 text-[9px] rounded font-bold transition-all ${
-                    language === 'ur' 
-                      ? 'bg-green-500 text-white shadow-sm' 
-                      : 'text-slate-500 dark:text-slate-455'
-                  }`}
-                >
-                  اردو
-                </button>
-              </div>
-            </div>
-          </div>
+          </>
         )}
       </div>
 
