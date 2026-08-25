@@ -748,6 +748,8 @@ export default function App() {
         onContactClick={() => setIsContactOpen(true)}
         onPrivacyClick={() => setIsPrivacyOpen(true)}
         onTermsClick={() => setIsTermsOpen(true)}
+        onSpecialtiesClick={() => setIsSpecialtiesOpen(true)}
+        onHistoryClick={() => setIsHistoryOpen(true)}
         navigateTo={handleNavigate}
         language={language}
         onLanguageChange={setLanguage}
