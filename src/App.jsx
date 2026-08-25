@@ -108,8 +108,23 @@ export default function App() {
       console.error("Failed to load/prune token history", e);
     }
 
-    const view = localStorage.getItem('dik_current_view') || 'home';
-    setCurrentView(view);
+    // Dynamic routing bypass based on active persistent staff session
+    const activeUser = getActiveUser();
+    if (activeUser) {
+      if (activeUser.role === 'admin') {
+        setCurrentView('admin-dashboard');
+        localStorage.setItem('dik_current_view', 'admin-dashboard');
+      } else if (activeUser.role === 'doctor') {
+        setCurrentView('doctor-dashboard');
+        localStorage.setItem('dik_current_view', 'doctor-dashboard');
+      } else {
+        setCurrentView('home');
+        localStorage.setItem('dik_current_view', 'home');
+      }
+    } else {
+      setCurrentView('home');
+      localStorage.setItem('dik_current_view', 'home');
+    }
 
     const dark = getDarkMode();
     setIsDarkMode(dark);

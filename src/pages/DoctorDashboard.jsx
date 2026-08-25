@@ -232,9 +232,10 @@ export default function DoctorDashboard({
             </button>
             <button 
               onClick={logout} 
-              className="flex-1 sm:flex-none px-4 py-2 bg-red-500 hover:bg-red-650 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center justify-center gap-1.5"
+              className="flex-1 sm:flex-none px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold transition-all shadow flex items-center justify-center gap-1.5"
             >
-              <i className="fa-solid fa-right-from-bracket"></i> Exit Portal
+              <i className="fa-solid fa-right-from-bracket"></i>
+              <span>{language === 'ur' ? 'لاگ آؤٹ' : 'Logout Staff'}</span>
             </button>
           </div>
         </div>
