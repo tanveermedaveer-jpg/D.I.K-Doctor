@@ -517,6 +517,21 @@ export default function App() {
     triggerToast(`Token #${tokenNumber} deleted`, "fa-trash text-red-500");
   };
 
+  const handleUpdatePrescription = (docId, tokenNumber, prescriptionText) => {
+    const docIndex = doctors.findIndex(d => d.id === docId);
+    if (docIndex === -1) return;
+
+    const doc = doctors[docIndex];
+    const updatedQueue = (doc.queue || []).map(item => 
+      item.tokenNumber === tokenNumber ? { ...item, prescription: prescriptionText } : item
+    );
+    const updatedDocs = [...doctors];
+    updatedDocs[docIndex] = { ...doc, queue: updatedQueue };
+
+    setDoctors(updatedDocs);
+    saveDoctors(updatedDocs);
+  };
+
   const handleClearQueue = (docId) => {
     const docIndex = doctors.findIndex(d => d.id === docId);
     if (docIndex === -1) return;
@@ -719,6 +734,7 @@ export default function App() {
             onDeleteToken={handleDeleteToken}
             onClearQueue={handleClearQueue}
             onAddWalkIn={handleAddWalkIn}
+            onUpdatePrescription={handleUpdatePrescription}
             navigateTo={handleNavigate}
             logout={handleLogout}
             language={language}

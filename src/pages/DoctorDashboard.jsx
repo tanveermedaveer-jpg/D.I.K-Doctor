@@ -75,6 +75,7 @@ export default function DoctorDashboard({
   onDeleteToken,
   onClearQueue,
   onAddWalkIn, 
+  onUpdatePrescription,
   navigateTo, 
   logout,
   language
@@ -104,6 +105,28 @@ export default function DoctorDashboard({
   const [walkinPhone, setWalkinPhone] = useState('');
   const [justGeneratedToken, setJustGeneratedToken] = useState(null);
   const [callLanguage, setCallLanguage] = useState(() => localStorage.getItem('dik_call_language') || 'ur');
+
+  // Prescription Notes State
+  const [prescription, setPrescription] = useState('');
+
+  const servingVal = doc.currentServing || 0;
+  const pendingQueue = doc.queue || [];
+  const activePatient = pendingQueue.find(item => item.tokenNumber === servingVal && item.status !== 'complete' && item.status !== 'skipped');
+
+  useEffect(() => {
+    if (activePatient) {
+      setPrescription(activePatient.prescription || '');
+    } else {
+      setPrescription('');
+    }
+  }, [servingVal, activePatient?.tokenNumber]);
+
+  const handlePrescriptionChange = (text) => {
+    setPrescription(text);
+    if (activePatient && onUpdatePrescription) {
+      onUpdatePrescription(doc.id, activePatient.tokenNumber, text);
+    }
+  };
 
   useEffect(() => {
     setDocName(doc.name);
@@ -184,8 +207,6 @@ export default function DoctorDashboard({
     }
   };
 
-  const servingVal = doc.currentServing || 0;
-  const pendingQueue = doc.queue || [];
   const initials = doc.name.split(' ').map(n => n[0]).join('').slice(0, 2);
 
   return (
@@ -377,6 +398,66 @@ export default function DoctorDashboard({
                 </div>
               </div>
 
+              {/* Active Serving Patient Notes Pad */}
+              <div className="bg-slate-50 dark:bg-slate-955 p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-850 text-left space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-700 dark:text-slate-350 flex items-center gap-1.5">
+                    <i className="fa-solid fa-file-medical text-green-500"></i>
+                    <span>Active Patient Consultation Notes</span>
+                  </h3>
+                  {activePatient ? (
+                    <span className="text-[10px] text-green-600 dark:text-green-400 bg-green-500/10 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span>
+                      Currently Serving
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-bold bg-slate-200 dark:bg-slate-800 px-2.5 py-0.5 rounded-full shrink-0">
+                      No Active Patient
+                    </span>
+                  )}
+                </div>
+
+                {activePatient ? (
+                  <div className="space-y-3.5">
+                    <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-400 block">Patient Name</span>
+                        <span className="font-extrabold text-slate-800 dark:text-slate-200">{activePatient.patientName}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-slate-400 block">Token Number</span>
+                        <span className="inline-block px-2.5 py-0.5 rounded-lg bg-green-500 text-white font-extrabold text-xs">
+                          #{activePatient.tokenNumber}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400">Diagnosis, Prescriptions & Medicines</label>
+                      <textarea
+                        value={prescription}
+                        onChange={(e) => handlePrescriptionChange(e.target.value)}
+                        placeholder="Write diagnosis, medicines (e.g. Panadol 500mg 1+1+1), or instructions here..."
+                        rows={4}
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-250 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white dark:placeholder-slate-500 focus:ring-2 focus:ring-green-500 outline-none resize-none"
+                      />
+                      <div className="flex justify-between items-center text-[10px] text-slate-400 dark:text-slate-500">
+                        <span><i className="fa-solid fa-clock-rotate-left mr-1"></i>Prescriptions auto-save to queue records</span>
+                        <span className="text-green-600 dark:text-green-400 font-bold flex items-center gap-1">
+                          <i className="fa-solid fa-cloud-arrow-up"></i> Saved to Session
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 bg-white dark:bg-slate-900 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 space-y-1">
+                    <i className="fa-solid fa-user-doctor text-2xl text-slate-300 dark:text-slate-700"></i>
+                    <p className="text-xs font-bold">No active patient currently in consulting room</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">Click the "Call Next" button above to pull the next patient from the waiting list.</p>
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1">
@@ -554,6 +635,47 @@ export default function DoctorDashboard({
 
             {/* Offline Entry & Leave Status */}
             <div className="space-y-6">
+              {/* Upcoming Waiting Queue Preview */}
+              <div className="bg-white dark:bg-slate-900 p-3 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <i className="fa-solid fa-clock text-amber-500"></i>
+                    <span>Upcoming Patients</span>
+                  </h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                    {pendingQueue.filter(item => item.tokenNumber > servingVal && item.status !== 'complete' && item.status !== 'skipped').length} Waiting
+                  </span>
+                </div>
+
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {pendingQueue.filter(item => item.tokenNumber > servingVal && item.status !== 'complete' && item.status !== 'skipped').length === 0 ? (
+                    <div className="text-center py-6 text-slate-400 dark:text-slate-500 text-[10px] font-bold">
+                      <i className="fa-solid fa-square-check text-xl mb-1 text-green-500"></i>
+                      <p>No upcoming patients waiting</p>
+                    </div>
+                  ) : (
+                    pendingQueue
+                      .filter(item => item.tokenNumber > servingVal && item.status !== 'complete' && item.status !== 'skipped')
+                      .map((item, idx) => (
+                        <div key={item.tokenNumber} className="flex justify-between items-center p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-850 text-xs">
+                          <div className="min-w-0 flex-1">
+                            <span className="font-bold text-slate-800 dark:text-slate-200 block truncate">{item.patientName}</span>
+                            <span className="font-mono text-[9px] text-slate-400 block mt-0.5">{item.patientPhone}</span>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="inline-block px-2 py-0.5 bg-slate-250 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold rounded text-[10px]">
+                              Token #{item.tokenNumber}
+                            </span>
+                            {idx === 0 && (
+                              <span className="block text-[8px] uppercase font-bold text-green-500 mt-0.5">Next in Line</span>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+
               <div className="bg-white dark:bg-slate-900 p-3 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-4">
                 <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5"><i className="fa-solid fa-toggle-on text-green-500"></i> Availability</h3>
                 <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 flex items-center justify-between">
